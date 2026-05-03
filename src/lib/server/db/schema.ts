@@ -21,7 +21,7 @@ export const properties = sqliteTable('properties', {
 
 	// Basic Info
 	propertyType: integer('property_type').references(() => propertyTypes.id),
-	listingType: text('listing_type', { enum: ['Sale', 'Rent'] }).notNull(),
+	listingType: text('listing_type').notNull(),
 	status: integer('status', { mode: 'boolean' }).default(true),
 
 	// Pricing

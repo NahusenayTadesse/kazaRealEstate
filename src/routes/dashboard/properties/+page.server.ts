@@ -1,5 +1,9 @@
 import { db } from '$lib/server/db';
-import { venueDetails, venueFeatures } from '$lib/server/db/schema';
+import {
+	propertyTypes,
+	properties as venueDetails,
+	propertyToAmenities as venueFeatures
+} from '$lib/server/db/schema';
 import type { PageServerLoad } from '../$types';
 import { getTableColumns, count, eq } from 'drizzle-orm';
 export const load: PageServerLoad = async () => {
@@ -7,10 +11,12 @@ export const load: PageServerLoad = async () => {
 	const eventList = await db
 		.select({
 			...getTableColumns(venueDetails),
-			features: count(venueFeatures.id)
+			features: count(venueFeatures.id),
+			type: propertyTypes.name
 		})
 		.from(venueDetails)
-		.leftJoin(venueFeatures, eq(venueDetails.id, venueFeatures.venueId))
+		.leftJoin(venueFeatures, eq(venueDetails.id, venueFeatures.propertyId))
+		.leftJoin(propertyTypes, eq(propertyTypes.id, venueDetails.propertyType))
 		.groupBy(venueDetails.id);
 
 	return {

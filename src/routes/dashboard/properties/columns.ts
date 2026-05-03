@@ -30,33 +30,42 @@ export const columns = [
 	},
 
 	{
-		accessorKey: 'name',
+		accessorKey: 'title',
 		header: ({ column }) =>
 			renderComponent(DataTableSort, {
-				name: 'Name',
+				name: 'Title',
 				onclick: column.getToggleSortingHandler()
 			}),
 		sortable: true,
 		cell: ({ row }) => {
 			// You can pass whatever you need from `row.original` to the component
 			return renderComponent(DataTableLinks, {
-				id: row.original.id,
-				name: row.original.name,
-				link: '/dashboard/venues/single'
+				id: row.original.slug,
+				name: row.original.title,
+				link: '/dashboard/properties/single'
 			});
 		}
 	},
 
 	{
-		accessorKey: 'capacity',
+		accessorKey: 'type',
 		header: ({ column }) =>
 			renderComponent(DataTableSort, {
-				name: 'Capacity',
+				name: 'Type',
 				onclick: column.getToggleSortingHandler()
 			}),
 		sortable: true
 	},
 
+	{
+		accessorKey: 'type',
+		header: ({ column }) =>
+			renderComponent(DataTableSort, {
+				name: 'Type',
+				onclick: column.getToggleSortingHandler()
+			}),
+		sortable: true
+	},
 	{
 		accessorKey: 'features',
 		header: ({ column }) =>
@@ -67,28 +76,42 @@ export const columns = [
 		sortable: true,
 		cell: ({ row }) => {
 			// You can pass whatever you need from `row.original` to the component
-			return row.original.features + ' features';
+			return row.original.features + ' ameneties';
 		}
 	},
 
 	{
-		accessorKey: 'location',
+		accessorKey: 'address',
 		header: ({ column }) =>
 			renderComponent(DataTableSort, {
-				name: 'Location',
+				name: 'Address',
 				onclick: column.getToggleSortingHandler()
 			}),
 		sortable: true
 	},
-
 	{
-		accessorKey: 'bookingPolicy',
-		header: 'Booking Policy',
+		accessorKey: 'googleMapsUrl',
+		header: 'Google Maps',
 
 		cell: ({ row }) => {
 			// You can pass whatever you need from `row.original` to the component
 			return renderComponent(BigText, {
-				text: row.original.bookingPolicy
+				text: row.original.googleMapsUrl,
+				html: true,
+				viewText: 'Google Maps'
+			});
+		}
+	},
+
+	{
+		accessorKey: 'shortSummary',
+		header: 'Short Summary',
+
+		cell: ({ row }) => {
+			// You can pass whatever you need from `row.original` to the component
+			return renderComponent(BigText, {
+				text: row.original.shortSummary,
+				html: true
 			});
 		}
 	},
@@ -100,7 +123,8 @@ export const columns = [
 		cell: ({ row }) => {
 			// You can pass whatever you need from `row.original` to the component
 			return renderComponent(BigText, {
-				text: row.original.description
+				text: row.original.description,
+				html: true
 			});
 		}
 	}

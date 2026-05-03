@@ -11,6 +11,7 @@
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { CircleAlert } from '@lucide/svelte';
 	import GalleryUpload from './GalleryUpload.svelte';
+	import RichTextEditor from './RichTextEditor.svelte';
 
 	let {
 		label,
@@ -60,6 +61,9 @@
 			<Label for={name} class="capitalize">{placeholder}</Label>
 			<input type="hidden" {name} bind:value={$form[name]} />
 		</div>
+	{:else if type === 'rich'}
+		<RichTextEditor bind:value={$form[name]} />
+		<input type="hidden" {name} bind:value={$form[name]} />
 	{:else}
 		<Input
 			class={className}

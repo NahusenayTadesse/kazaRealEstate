@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 
-	let { title, children, description = '', className = '' } = $props();
+	let { title, children, description = '', class: className = '' } = $props();
 </script>
 
 <Card.Root class="flex w-full flex-col gap-4 lg:w-2xl {className}">

@@ -15,7 +15,9 @@
 		Quote,
 		Briefcase,
 		Book,
-		Images
+		Images,
+		Home,
+		House
 	} from '@lucide/svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import type { ComponentProps } from 'svelte';
@@ -56,12 +58,12 @@
 		},
 
 		{
-			title: 'Venue Management',
-			url: '/dashboard/venues',
-			icon: MapPin,
+			title: 'Propeties',
+			url: '/dashboard/properties',
+			icon: House,
 			items: [
-				{ title: 'Add New Venue', url: '/dashboard/venues/add-venue', icon: Plus },
-				{ title: 'View All Venues', url: '/dashboard/venues', icon: Sheet }
+				{ title: 'Add New Property', url: '/dashboard/properties/add-property', icon: Plus },
+				{ title: 'View All Properties', url: '/dashboard/properties', icon: Sheet }
 			]
 		},
 

@@ -3,7 +3,7 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 
 import { add } from './schema';
 import { db } from '$lib/server/db';
-import { venueDetails as inventory, venueImages as productImages } from '$lib/server/db/schema';
+import { properties as inventory, propertyImages as productImages } from '$lib/server/db/schema';
 import type { Actions } from './$types';
 import type { PageServerLoad } from './$types.js';
 import { redirect, setFlash } from 'sveltekit-flash-message/server';
@@ -20,7 +20,7 @@ export const load: PageServerLoad = async () => {
 import { saveUploadedFile } from '$lib/server/upload.js';
 
 export const actions: Actions = {
-	addVenue: async ({ request, cookies, locals }) => {
+	addProperty: async ({ request, cookies, locals }) => {
 		const form = await superValidate(request, zod4(add));
 		console.log(form);
 
@@ -30,11 +30,45 @@ export const actions: Actions = {
 			return message(form, { type: 'error', text: 'Please check your form data.' });
 		}
 
-		const { name, capacity, bookingPolicy, image, location, description, gallery } = form.data;
+		const {
+			title,
+			shortSummary,
+			description,
+			city,
+			slug,
+			address,
+			googleMapUrl,
+			bedrooms,
+			bathrooms,
+			price,
+			sizeSqm,
+			floorNumber,
+			yearBuilt,
+			image,
+			gallery,
+			featuredTourUrl
+		} = form.data;
 
 		const result = await db.transaction(async (tx) => {
 			// 1. Upload images first (usually done before the DB transaction starts
 			// to avoid keeping a DB connection open during slow network I/O)
+			//
+			// let newSlug: string;
+			//
+			let newSlug: string;
+
+			const existingSlug = await tx
+				.select({ slug: inventory.slug })
+				.from(inventory)
+				.where(eq(inventory.slug, slug))
+				.limit(1);
+
+			if (existingSlug.length > 0) {
+				newSlug = slug + '-1';
+			} else {
+				newSlug = slug;
+			}
+
 			const featuredImage = await saveUploadedFile(image);
 			const galleryImages = await uploadGallery(gallery);
 
@@ -42,22 +76,33 @@ export const actions: Actions = {
 			const [product] = await tx
 				.insert(inventory)
 				.values({
-					name,
-					capacity,
-					bookingPolicy,
-					location,
+					title,
+					slug,
+					shortSummary,
 					description,
+					price,
+					city,
+					address,
+					listingType: 'Sale',
+					googleMapUrl,
+					bedrooms,
+					bathrooms,
+					sizeSqm,
+					floorNumber,
+					yearBuilt,
 					featuredImage,
+					gallery,
+					featuredTourUrl,
 					createdBy: locals?.user?.id
 				})
-				.$returningId();
+				.returning();
 
 			const newProductId = product.id;
 
 			// 3. Prepare and insert the gallery images
 			if (galleryImages.length > 0) {
 				const imageRecords = galleryImages.map((url) => ({
-					venueId: newProductId,
+					propertyId: newProductId,
 					imageUrl: url
 				}));
 
@@ -78,10 +123,10 @@ export const actions: Actions = {
 				{ status: 500 }
 			);
 		} else {
-			message(form, { type: 'success', text: 'New Venue Successfully Added' });
+			message(form, { type: 'success', text: 'New Property Successfully Added' });
 			redirect(
 				`/dashboard/venues/single/${result}`,
-				{ type: 'success', message: 'New Venue Successfully Added' },
+				{ type: 'success', message: 'New Property Successfully Added' },
 				cookies
 			);
 		}

@@ -9,14 +9,14 @@
 
 <div class="mb-8 flex flex-row items-center justify-start gap-2">
 	<Button
-		href="/dashboard/venues"
-		variant={page.url.pathname === '/dashboard/venues' ? 'default' : 'outline'}
-		><Sheet /> Venues</Button
+		href="/dashboard/properties"
+		variant={page.url.pathname === '/dashboard/properties' ? 'default' : 'outline'}
+		><Sheet /> Properties</Button
 	>
 	<Button
-		href="/dashboard/venues/add-venue"
-		variant={page.url.pathname === '/dashboard/venues/add-venue' ? 'default' : 'outline'}
-		><Plus /> Add Venue</Button
+		href="/dashboard/properties/add-property"
+		variant={page.url.pathname === '/dashboard/properties/add-property' ? 'default' : 'outline'}
+		><Plus /> Add Property</Button
 	>
 </div>
 
