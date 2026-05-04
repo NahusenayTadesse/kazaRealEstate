@@ -84,6 +84,28 @@
 			<InputComp
 				{form}
 				{errors}
+				type="select"
+				name="propertyType"
+				label="Property Type"
+				placeholder="Enter Property Type"
+				required
+				items={data?.types}
+			/>
+
+			<InputComp
+				{form}
+				{errors}
+				type="checkbox"
+				name="amenities"
+				label="Amenities"
+				placeholder="Enter Amenities"
+				required
+				items={data?.amenity}
+			/>
+
+			<InputComp
+				{form}
+				{errors}
 				type="number"
 				name="price"
 				label="Property Price"
@@ -193,6 +215,14 @@
 					name="floorNumber"
 					label="Floor Number"
 					placeholder="Floor"
+				/>
+				<InputComp
+					{form}
+					{errors}
+					type="number"
+					name="totalFloors"
+					label="Total Floors"
+					placeholder="Total Floors in the Building"
 				/>
 
 				<InputComp

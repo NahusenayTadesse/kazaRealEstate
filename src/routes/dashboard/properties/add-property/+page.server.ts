@@ -3,7 +3,13 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 
 import { add } from './schema';
 import { db } from '$lib/server/db';
-import { properties as inventory, propertyImages as productImages } from '$lib/server/db/schema';
+import {
+	properties as inventory,
+	propertyImages as productImages,
+	propertyTypes,
+	propertyToAmenities,
+	amenities
+} from '$lib/server/db/schema';
 import type { Actions } from './$types';
 import type { PageServerLoad } from './$types.js';
 import { redirect, setFlash } from 'sveltekit-flash-message/server';
@@ -12,8 +18,24 @@ import { eq } from 'drizzle-orm';
 export const load: PageServerLoad = async () => {
 	const form = await superValidate(zod4(add));
 
+	const types = await db
+		.select({
+			value: propertyTypes.id,
+			name: propertyTypes.name
+		})
+		.from(propertyTypes);
+
+	const amenity = await db
+		.select({
+			value: amenities.id,
+			name: amenities.name
+		})
+		.from(amenities);
+
 	return {
-		form
+		form,
+		types,
+		amenity
 	};
 };
 
@@ -46,6 +68,9 @@ export const actions: Actions = {
 			yearBuilt,
 			image,
 			gallery,
+			propertyType,
+			amenities,
+			totalFloors,
 			featuredTourUrl
 		} = form.data;
 
@@ -85,6 +110,8 @@ export const actions: Actions = {
 					address,
 					listingType: 'Sale',
 					googleMapUrl,
+					totalFloors,
+					propertyType,
 					bedrooms,
 					bathrooms,
 					sizeSqm,
@@ -107,6 +134,15 @@ export const actions: Actions = {
 				}));
 
 				await tx.insert(productImages).values(imageRecords);
+			}
+
+			if (amenities.length > 0) {
+				const imageRecords = amenities.map((url) => ({
+					propertyId: newProductId,
+					amenityId: url
+				}));
+
+				await tx.insert(propertyToAmenities).values(imageRecords);
 			}
 
 			// Return the ID or the full object if needed

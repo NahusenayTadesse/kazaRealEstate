@@ -6,6 +6,8 @@ export const add = z.object({
 	description: z.string().optional(),
 	slug: z.string(),
 	price: z.coerce.number().positive('Price must be greater than 0'),
+	propertyType: z.number().optional(),
+	amenities: z.coerce.number().optional().array(),
 
 	// --- Location ---
 	city: z.string().min(1, { message: 'City is required' }),
@@ -17,6 +19,7 @@ export const add = z.object({
 	bathrooms: z.coerce.number().min(0),
 	sizeSqm: z.coerce.number().positive('Size must be greater than 0').optional(),
 	floorNumber: z.coerce.number().int().optional(),
+	totalFloors: z.coerce.number().int().optional(),
 	yearBuilt: z.coerce
 		.number()
 		.int()

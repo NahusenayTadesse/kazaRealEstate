@@ -23,12 +23,9 @@ export const load: PageServerLoad = async () => {
 			name: paymentMethods.name,
 			position: paymentMethods.position,
 			testimonial: paymentMethods.message,
-			avatar: paymentMethods.avatar,
-			createdBy: user.name,
-			createdById: paymentMethods.createdBy
+			avatar: paymentMethods.avatar
 		})
-		.from(paymentMethods)
-		.leftJoin(user, eq(user.id, paymentMethods.createdBy));
+		.from(paymentMethods);
 
 	return {
 		form,

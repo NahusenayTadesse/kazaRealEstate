@@ -183,14 +183,14 @@
 	/>
 </div>
 
-<div class="my-8">
+<!-- <div class="my-8">
 	<AddVideo
 		data={data?.addVideoForm}
 		editForm={data?.editVideoForm}
 		deleteForm={data?.deleteForm}
 		videos={data?.videos}
 	/>
-</div>
+</div> -->
 <div class="mx-auto my-12 px-4 sm:px-6 lg:px-4">
 	{#if data?.product?.title}
 		<div class="mb-6 border-b border-gray-100 pb-4">

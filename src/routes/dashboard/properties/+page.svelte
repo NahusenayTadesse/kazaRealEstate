@@ -33,6 +33,6 @@
 			data={data?.eventList}
 			filterKeys={['client', 'eventType', 'location']}
 		/>
-		<DataTable data={filteredList} {columns} fileName="Property List" />
+		<DataTable data={filteredList} {columns} class="max-w-6xl!" fileName="Property List" />
 	</div>
 {/if}

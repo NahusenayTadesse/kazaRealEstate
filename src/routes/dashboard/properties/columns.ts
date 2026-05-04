@@ -7,6 +7,7 @@ import PriceList from './priceList.svelte';
 import { formatEthiopianDate } from '$lib/global.svelte';
 import BigText from '$lib/components/Table/bigText.svelte';
 import Statuses from '$lib/components/Table/statuses.svelte';
+import VideoViewer from '$lib/components/Table/videoViewer.svelte';
 
 export const columns = [
 	{
@@ -28,6 +29,19 @@ export const columns = [
 			});
 		}
 	},
+	{
+		accessorKey: 'videoTourUrl',
+		header: 'Video Tour',
+		sortable: true,
+		cell: ({ row }) => {
+			// You can pass whatever you need from `row.original` to the component
+			return renderComponent(VideoViewer, {
+				videoUrl: row.original.videoTourUrl,
+				class: 'w-15 h-15',
+				dialog: true
+			});
+		}
+	},
 
 	{
 		accessorKey: 'title',
@@ -40,7 +54,7 @@ export const columns = [
 		cell: ({ row }) => {
 			// You can pass whatever you need from `row.original` to the component
 			return renderComponent(DataTableLinks, {
-				id: row.original.slug,
+				id: row.original.id,
 				name: row.original.title,
 				link: '/dashboard/properties/single'
 			});
@@ -58,19 +72,57 @@ export const columns = [
 	},
 
 	{
-		accessorKey: 'type',
+		accessorKey: 'bathrooms',
 		header: ({ column }) =>
 			renderComponent(DataTableSort, {
-				name: 'Type',
+				name: 'Bathrooms',
 				onclick: column.getToggleSortingHandler()
 			}),
 		sortable: true
 	},
 	{
-		accessorKey: 'features',
+		accessorKey: 'bedrooms',
 		header: ({ column }) =>
 			renderComponent(DataTableSort, {
-				name: 'Number of Features',
+				name: 'Bedrooms',
+				onclick: column.getToggleSortingHandler()
+			}),
+		sortable: true
+	},
+	{
+		accessorKey: 'price',
+		header: ({ column }) =>
+			renderComponent(DataTableSort, {
+				name: 'Price',
+				onclick: column.getToggleSortingHandler()
+			}),
+		sortable: true,
+		cell: ({ row }) => {
+			// You can pass whatever you need from `row.original` to the component
+			return 'ETB ' + row.original.price;
+		}
+	},
+
+	{
+		accessorKey: 'status',
+		header: ({ column }) =>
+			renderComponent(DataTableSort, {
+				name: 'Status',
+				onclick: column.getToggleSortingHandler()
+			}),
+		sortable: true,
+		cell: ({ row }) => {
+			// You can pass whatever you need from `row.original` to the component
+			return renderComponent(Statuses, {
+				status: row.original.status ? 'available' : 'sold'
+			});
+		}
+	},
+	{
+		accessorKey: 'amenities',
+		header: ({ column }) =>
+			renderComponent(DataTableSort, {
+				name: 'Number of Amenities',
 				onclick: column.getToggleSortingHandler()
 			}),
 		sortable: true,
@@ -78,6 +130,53 @@ export const columns = [
 			// You can pass whatever you need from `row.original` to the component
 			return row.original.features + ' ameneties';
 		}
+	},
+
+	{
+		accessorKey: 'sizeSqm',
+		header: ({ column }) =>
+			renderComponent(DataTableSort, {
+				name: 'Size (sqm)',
+				onclick: column.getToggleSortingHandler()
+			}),
+		sortable: true,
+		cell: ({ row }) => {
+			// You can pass whatever you need from `row.original` to the component
+			return row.original.sizeSqm + ' sqm';
+		}
+	},
+
+	{
+		accessorKey: 'floorNumber',
+		header: ({ column }) =>
+			renderComponent(DataTableSort, {
+				name: 'Floor Number',
+				onclick: column.getToggleSortingHandler()
+			}),
+		sortable: true,
+		cell: ({ row }) => {
+			// You can pass whatever you need from `row.original` to the component
+			return row.original.floorNumber + ' floor/' + row.original.totalFloors + ' floors';
+		}
+	},
+	{
+		accessorKey: 'yearBuilt',
+		header: ({ column }) =>
+			renderComponent(DataTableSort, {
+				name: 'Year Built',
+				onclick: column.getToggleSortingHandler()
+			}),
+		sortable: true
+	},
+
+	{
+		accessorKey: 'city',
+		header: ({ column }) =>
+			renderComponent(DataTableSort, {
+				name: 'City',
+				onclick: column.getToggleSortingHandler()
+			}),
+		sortable: true
 	},
 
 	{
@@ -111,7 +210,8 @@ export const columns = [
 			// You can pass whatever you need from `row.original` to the component
 			return renderComponent(BigText, {
 				text: row.original.shortSummary,
-				html: true
+				html: true,
+				viewText: 'Short Summary'
 			});
 		}
 	},
@@ -124,7 +224,8 @@ export const columns = [
 			// You can pass whatever you need from `row.original` to the component
 			return renderComponent(BigText, {
 				text: row.original.description,
-				html: true
+				html: true,
+				viewText: 'Description'
 			});
 		}
 	}

@@ -18,6 +18,17 @@
 		variant={page.url.pathname === '/dashboard/properties/add-property' ? 'default' : 'outline'}
 		><Plus /> Add Property</Button
 	>
+	<Button
+		href="/dashboard/properties/types"
+		variant={page.url.pathname === '/dashboard/properties/types' ? 'default' : 'outline'}
+		><Sheet /> Property Types</Button
+	>
+
+	<Button
+		href="/dashboard/properties/ameneties"
+		variant={page.url.pathname === '/dashboard/properties/ameneties' ? 'default' : 'outline'}
+		><Sheet /> Ameneties
+	</Button>
 </div>
 
 {@render children?.()}

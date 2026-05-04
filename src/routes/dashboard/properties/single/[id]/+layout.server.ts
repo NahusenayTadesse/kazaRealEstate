@@ -13,11 +13,11 @@ import {
 
 import { db } from '$lib/server/db';
 import {
-	venueDetails as event,
-	venueImages as productImages,
-	user,
-	venueFeatures,
-	venueVideos
+	properties as event,
+	propertyImages as productImages,
+	propertyTypes,
+	amenities as venueFeatures,
+	propertyToAmenities
 } from '$lib/server/db/schema';
 import { eq, sql, getTableColumns } from 'drizzle-orm';
 import type { LayoutServerLoad } from './$types';
@@ -30,17 +30,17 @@ export const load: LayoutServerLoad = async ({ params }) => {
 			url: productImages.imageUrl
 		})
 		.from(productImages)
-		.where(eq(productImages.venueId, Number(id)));
+		.where(eq(productImages.propertyId, Number(id)));
 
 	const images = result.map((img) => img.url);
 
 	const product = await db
 		.select({
 			...getTableColumns(event),
-			createdBy: user.name
+			type: propertyTypes.name
 		})
 		.from(event)
-		.leftJoin(user, eq(event.createdBy, user.id))
+		.leftJoin(propertyTypes, eq(propertyTypes.id, event.propertyType))
 		.where(eq(event.id, Number(id)))
 		.limit(1)
 		.then((rows) => rows[0]);
@@ -51,16 +51,9 @@ export const load: LayoutServerLoad = async ({ params }) => {
 			name: venueFeatures.name,
 			description: venueFeatures.description
 		})
-		.from(venueFeatures)
-		.where(eq(venueFeatures.venueId, Number(id)));
-
-	const videos = await db
-		.select({
-			id: venueVideos.id,
-			videoUrl: venueVideos.videoUrl
-		})
-		.from(venueVideos)
-		.where(eq(venueVideos.venueId, Number(id)));
+		.from(propertyToAmenities)
+		.leftJoin(venueFeatures, eq(venueFeatures.id, propertyToAmenities.id))
+		.where(eq(propertyToAmenities.propertyId, Number(id)));
 
 	const addForm = await superValidate(zod4(addFeature));
 	const addVideoForm = await superValidate(zod4(addVideo));
@@ -72,7 +65,6 @@ export const load: LayoutServerLoad = async ({ params }) => {
 
 	return {
 		product,
-		videos,
 		addForm,
 		addVideoForm,
 		editVideoForm,
