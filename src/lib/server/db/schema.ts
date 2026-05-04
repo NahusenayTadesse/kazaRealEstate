@@ -117,3 +117,28 @@ export const contactMessages = sqliteTable('contact_messages', {
 	seen: integer('seen', { mode: 'boolean' }).default(false),
 	createdAt: integer('created_at', { mode: 'timestamp' }).$defaultFn(() => new Date())
 });
+export const blogCategories = sqliteTable('blog_categories', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	name: text('name').notNull(),
+	description: text('description').notNull()
+});
+export const blog = sqliteTable('blog', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	title: text('title').notNull(),
+	categoryId: integer('category_id')
+		.notNull()
+		.references(() => blogCategories.id, { onDelete: 'cascade' }),
+	slug: text('slug', { length: 255 }).notNull(),
+	excerpt: text('excerpt'),
+	content: text('content'),
+	isFeaturedOnHome: integer('is_featured_on_home', { mode: 'boolean' }).default(false),
+	featuredImage: text('featured_image', { length: 255 })
+});
+
+export const blogGallery = sqliteTable('blog_gallery', {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	blogId: integer('blog_id')
+		.notNull()
+		.references(() => blog.id, { onDelete: 'cascade' }),
+	imageUrl: text('image_url')
+});

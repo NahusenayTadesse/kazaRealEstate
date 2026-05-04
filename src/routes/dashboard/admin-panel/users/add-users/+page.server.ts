@@ -9,18 +9,12 @@ import { eq } from 'drizzle-orm';
 
 import { db } from '$lib/server/db';
 import { APIError } from 'better-auth';
-import { user, roles } from '$lib/server/db/schema';
+import { user } from '$lib/server/db/schema';
 
 export const load: PageServerLoad = async () => {
 	const form = await superValidate(zod4(add));
-	const allRoles = await db
-		.select({
-			value: roles.id,
-			name: roles.name
-		})
-		.from(roles);
 
-	return { form, allRoles };
+	return { form };
 };
 
 export const actions: Actions = {
@@ -40,24 +34,16 @@ export const actions: Actions = {
 			);
 		}
 
-		const { name, email, password, role } = form.data;
+		const { name, email, password } = form.data;
 
 		try {
-			await db.transaction(async (tx) => {
-				const newCustomer = await auth.api.createUser({
-					body: {
-						email,
-						password,
-						name,
-						role: role === 1 ? 'admin' : 'user'
-					}
-				});
-				await tx
-					.update(user)
-					.set({
-						roleId: 1
-					})
-					.where(eq(user.id, newCustomer?.user.id));
+			await auth.api.createUser({
+				body: {
+					email,
+					password,
+					name,
+					role: 'admin'
+				}
 			});
 
 			return message(form, {

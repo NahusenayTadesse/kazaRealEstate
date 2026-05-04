@@ -8,10 +8,7 @@
 
 	let { children } = $props();
 
-	let userManagement = [
-		{ name: 'Users', href: '/dashboard/admin-panel/users' },
-		{ name: 'Roles', href: '/dashboard/admin-panel/roles' }
-	];
+	let userManagement = [{ name: 'Users', href: '/dashboard/admin-panel/users' }];
 </script>
 
 {#snippet menu(trigger = '', array = [{ name: '', href: '' }])}

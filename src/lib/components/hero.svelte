@@ -1,30 +1,30 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { CalendarHeartIcon, MapPinIcon, TrendingUpIcon } from '@lucide/svelte';
+	import { CalendarHeartIcon, House, MapPinIcon, TrendingUpIcon } from '@lucide/svelte';
 	import { fly, fade } from 'svelte/transition';
 	import { cubicOut, elasticOut } from 'svelte/easing';
 
 	const stats = [
 		{
-			label: 'Event Management',
+			label: 'Property Listings',
 			value: 'Premium',
-			icon: CalendarHeartIcon,
+			icon: MapPinIcon,
 			pos: 'top-[8%] right-[12%]',
 			delay: 700,
 			accent: '#FFB347'
 		},
 		{
-			label: '4 Kilo Plaza',
-			value: 'Venue',
-			icon: MapPinIcon,
+			label: 'Addis Ababa',
+			value: 'Prime Locations',
+			icon: CalendarHeartIcon,
 			pos: 'top-[42%] right-[3%]',
 			delay: 900,
 			accent: '#F2E1D1'
 		},
 		{
-			label: 'Sales & Growth',
-			value: 'Monetized',
+			label: 'Investment Growth',
+			value: 'High ROI',
 			icon: TrendingUpIcon,
 			pos: 'bottom-[12%] right-[35%]',
 			delay: 1100,
@@ -32,7 +32,12 @@
 		}
 	];
 
-	const images = ['/event (1).webp', '/event (2).webp', '/event (3).webp', '/event (4).webp'];
+	const images = [
+		'/realestate (1).webp',
+		'/realestate (2).webp',
+		'/realestate (3).webp',
+		'/realestate (4).webp'
+	];
 	let currentIndex = $state(0);
 	let mounted = $state(false);
 	let titleVisible = $state(false);
@@ -66,7 +71,7 @@
 	});
 </script>
 
-<section class="hero relative min-h-dvh w-full overflow-hidden bg-[#060e20]">
+<section class="hero relative min-h-dvh w-full overflow-hidden bg-primary">
 	<!-- Animated gradient orbs -->
 	<div class="orb orb-1" aria-hidden="true"></div>
 	<div class="orb orb-2" aria-hidden="true"></div>
@@ -90,11 +95,9 @@
 			{/if}
 		{/each}
 		<!-- Strong directional gradient -->
+		<div class="absolute inset-0 bg-linear-to-r from-primary/98 via-primary/75 to-primary/20"></div>
 		<div
-			class="absolute inset-0 bg-linear-to-r from-[#060e20]/98 via-[#060e20]/75 to-[#060e20]/20"
-		></div>
-		<div
-			class="absolute inset-0 bg-linear-to-t from-[#060e20]/80 via-transparent to-[#060e20]/40"
+			class="absolute inset-0 bg-linear-to-t from-primary/80 via-transparent to-primary/40"
 		></div>
 	</div>
 
@@ -133,7 +136,7 @@
 						<div class="eyebrow-tag inline-flex items-center gap-3 rounded-full px-5 py-2">
 							<span class="pulse-dot"></span>
 							<span class="text-[11px] font-black tracking-[0.35em] text-[#FFB347] uppercase">
-								Ahead of the curve · Addis Ababa
+								Premium Living · Addis Ababa
 							</span>
 						</div>
 					</div>
@@ -144,12 +147,12 @@
 							<span
 								class="block text-[clamp(4rem,11vw,8.5rem)] leading-[0.85] font-black tracking-tighter text-white"
 							>
-								YEBEHIR
+								KAZA
 							</span>
 							<span
 								class="ventures-word mt-2 ml-1 block text-[clamp(1.8rem,5vw,3.8rem)] font-light tracking-[0.15em] text-[#F2E1D1]/70"
 							>
-								VENTURES
+								REAL ESTATE
 							</span>
 							<!-- Decorative underline stroke -->
 							<span class="stroke-line" aria-hidden="true"></span>
@@ -157,21 +160,18 @@
 					</div>
 
 					<!-- Description card -->
-					<div
-						in:fly={{ y: 30, duration: 800, delay: 450, easing: cubicOut }}
-						class="max-w-lg space-y-5"
-					>
-						<p class="text-xl leading-relaxed font-semibold text-zinc-200">
-							"We Create, Manage &amp; Monetize Events in Addis"
+					<div in:fly={{ y: 30, duration: 800, delay: 450 }} class="max-w-lg">
+						<p class="mb-4 text-xl font-semibold text-zinc-200">
+							"Find Your Dream Home in Addis Ababa"
 						</p>
 
-						<div class="desc-card rounded-xl p-5">
-							<p class="mb-2 text-[11px] font-black tracking-[0.25em] text-[#FFB347] uppercase">
-								The Experience Agency
+						<div class="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+							<p class="mb-2 text-xs font-bold tracking-widest text-[#FFB347] uppercase">
+								Trusted Property Experts
 							</p>
-							<p class="text-base leading-relaxed text-zinc-300">
-								We don't just organize events — we craft experiences, unlock revenue, and bridge
-								brands with audiences that matter.
+							<p class="text-zinc-300">
+								We connect you to modern homes, luxury apartments, and high-value investment
+								properties across Addis Ababa. Buy, rent, or invest with confidence.
 							</p>
 						</div>
 					</div>
@@ -181,23 +181,13 @@
 						in:fly={{ y: 30, duration: 800, delay: 600, easing: cubicOut }}
 						class="flex flex-wrap gap-4"
 					>
-						<Button href="/services" size="lg" variant="default">
-							Our Services
-							<svg
-								class="size-4 transition-transform duration-300 group-hover:translate-x-1"
-								viewBox="0 0 16 16"
-								fill="none"
-							>
-								<path
-									d="M3 8h10M9 4l4 4-4 4"
-									stroke="currentColor"
-									stroke-width="1.5"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								/>
-							</svg>
+						<Button href="/properties" size="lg" variant="outline">
+							<House />
+							Our Properties
 						</Button>
-						<Button href="/quote" size="lg" variant="outline">Request a Quote</Button>
+						<Button href="/about-us" size="lg" variant="default" class="border-white"
+							>About Us</Button
+						>
 					</div>
 
 					<!-- Image dot indicators -->

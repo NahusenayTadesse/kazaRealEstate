@@ -1,9 +1,9 @@
-import { message, superValidate } from 'sveltekit-superforms';
+import { setError, message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { editUserSchema as schema } from './schema';
 
 import { db } from '$lib/server/db';
-import { roles, user, permissions, rolePermissions, session } from '$lib/server/db/schema';
+import { user, session } from '$lib/server/db/schema';
 import { eq, and, sql } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 import { fail } from 'sveltekit-superforms';
@@ -20,13 +20,12 @@ export const load: PageServerLoad = async ({ params }) => {
 			id: user.id,
 			name: user.name,
 			email: user.email,
-			roleId: user.roleId,
-			role: roles.name,
+
 			createdAt: user.createdAt,
 			updatedAt: user.updatedAt
 		})
 		.from(user)
-		.leftJoin(roles, eq(user.roleId, roles.id))
+		.limit(1)
 		.where(eq(user.id, id))
 		.then((rows) => rows[0]);
 
@@ -34,29 +33,10 @@ export const load: PageServerLoad = async ({ params }) => {
 		error(404, { message: 'User not found' });
 	}
 
-	const roleList = await db
-		.select({
-			value: roles.id,
-			name: roles.name
-		})
-		.from(roles);
-
-	const permissionList = await db
-		.select({
-			id: permissions.id,
-			name: permissions.name,
-			description: permissions.description
-		})
-		.from(permissions)
-		.innerJoin(rolePermissions, eq(permissions.id, rolePermissions.permissionId))
-		.where(eq(rolePermissions.roleId, singleUser.roleId));
-
 	return {
 		singleUser,
 		id,
-		form,
-		roleList,
-		permissionList
+		form
 	};
 };
 
@@ -74,7 +54,7 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		const { name, email, role } = form.data;
+		const { name, email } = form.data;
 
 		try {
 			const existingUser = await db
@@ -96,12 +76,12 @@ export const actions: Actions = {
 					);
 				}
 			}
+
 			await db
 				.update(user)
 				.set({
 					name,
-					email,
-					roleId: role
+					email
 				})
 				.where(eq(user.id, id));
 

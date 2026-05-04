@@ -16,8 +16,7 @@
 		{ label: 'Home', href: '/' },
 		{ label: 'About Us', href: '/about-us' },
 
-		{ label: 'Services', href: '/services' },
-		{ label: 'Events', href: '/events' },
+		{ label: 'Properties', href: '/properties' },
 		{ label: 'Blogs', href: '/blogs' },
 
 		{ label: 'Contact', href: '/contact-us' }
@@ -34,7 +33,7 @@
 				<img
 					src="/logo.webp"
 					class="h-12 w-auto object-contain"
-					alt="Yebehir"
+					alt="Kaza Real Estate"
 					fetchpriority="high"
 				/>
 			</a>
@@ -58,9 +57,9 @@
 		</nav>
 		<div class="flex flex-row gap-4">
 			<div class="hidden flex-row items-center justify-end gap-2 lg:flex">
-				<Button href="/quote" size="lg" variant="outline"
+				<!-- <Button href="/quote" size="lg" variant="outline"
 					>Get A Quote<ArrowRight class="size-4" /></Button
-				>
+				> -->
 				<DarkMode />
 			</div>
 

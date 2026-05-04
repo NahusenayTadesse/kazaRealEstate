@@ -65,6 +65,8 @@
 	},
 	"dependencies": {
 		"@libsql/client": "^0.17.3",
+		"@prgm/sveltekit-progress-bar": "^3.0.2",
+		"@tabler/icons-svelte": "^3.41.1",
 		"better-sqlite3": "^12.8.0",
 		"browser-image-compression": "^2.0.2",
 		"embla-carousel-autoplay": "^8.6.0",

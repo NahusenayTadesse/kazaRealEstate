@@ -24,8 +24,6 @@
 	let singleTable = $derived([
 		{ name: 'Name', value: data.singleUser?.name },
 		{ name: 'Email', value: data.singleUser?.email },
-		{ name: 'Phone', value: data.singleUser?.phone },
-		{ name: 'Role', value: data.singleUser?.role },
 		{ name: 'Created At', value: data.singleUser?.createdAt.toLocaleString() },
 		{ name: 'Updated At', value: data.singleUser?.updatedAt.toLocaleString() }
 	]);
@@ -57,7 +55,6 @@
 
 	$form.name = data.singleUser?.name;
 	$form.email = data.singleUser?.email;
-	$form.role = data.singleUser?.roleId;
 </script>
 
 <svelte:head>
@@ -91,8 +88,6 @@
 				{@render fe('Name', 'name', 'text', 'Change Name', true)}
 				{@render fe('Email', 'email', 'email', 'Change email', true)}
 
-				{@render selects('role', data?.roleList)}
-
 				<Button form="edit" type="submit" class="mt-4">
 					{#if $delayed}
 						<LoadingBtn name="Saving Changes" />
@@ -107,12 +102,6 @@
 </SingleView>
 
 <br />
-
-<DataTable
-	data={data?.permissionList}
-	{columns}
-	fileName="{data?.singleUser?.name}Permission List"
-/>
 
 {#snippet fe(
 	label = '',
@@ -138,13 +127,5 @@
 		{#if $errors[name]}
 			<span class="text-red-500">{$errors[name]}</span>
 		{/if}
-	</div>
-{/snippet}
-{#snippet selects(name, items)}
-	<div class="flex w-full flex-col justify-start gap-2">
-		<Label for={name} class="capitalize">{name.replace(/([a-z])([A-Z])/g, '$1 $2')}:</Label>
-
-		<SelectComp {name} bind:value={$form[name]} {items} />
-		{#if $errors[name]}<span class="text-red-500">{$errors[name]}</span>{/if}
 	</div>
 {/snippet}

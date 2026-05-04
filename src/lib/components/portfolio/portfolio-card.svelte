@@ -1,70 +1,168 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge';
-	import { Card, CardContent } from '$lib/components/ui/card';
-	import { CalendarIcon, MapPinIcon, UserIcon } from '@lucide/svelte';
-	import type { PortfolioItem } from '$lib/data/portfolio';
+	import { BedDoubleIcon, BathIcon, RulerIcon, MapPinIcon, BuildingIcon } from '@lucide/svelte';
 
-	const { item }: { item: PortfolioItem } = $props();
+	interface PropertyType {
+		id: number;
+		name: string;
+		description?: string | null;
+	}
 
-	const formattedDate = $derived(
-		item.date
-			? new Date(item.date).toLocaleDateString('en-US', {
-					month: 'short',
-					day: 'numeric',
-					year: 'numeric'
-				})
-			: null
-	);
+	interface Property {
+		id: number;
+		title: string;
+		slug: string;
+		description?: string | null;
+		shortSummary?: string | null;
+		propertyType?: PropertyType | null;
+		status: boolean;
+		price: number;
+		currency: string;
+		city: string;
+		address?: string | null;
+		showAddressPublicly: boolean;
+		googleMapsUrl?: string | null;
+		bedrooms?: number | null;
+		bathrooms?: number | null;
+		sizeSqm?: number | null;
+		floorNumber?: number | null;
+		totalFloors?: number | null;
+		yearBuilt?: number | null;
+		featuredImage: string;
+		rawPlan?: string | null;
+		videoTourUrl?: string | null;
+	}
+
+	interface Props {
+		property: Property;
+	}
+
+	const { property }: Props = $props();
+
+	/** Format price with currency */
+	const formatPrice = (price: number, currency: string): string => {
+		return new Intl.NumberFormat('en-ET', {
+			style: 'currency',
+			currency: currency === 'ETB' ? 'ETB' : currency,
+			minimumFractionDigits: 0,
+			maximumFractionDigits: 0
+		}).format(price);
+	};
+
+	/** Navigate to property detail page */
+	const handleClick = () => {
+		window.location.href = `/properties/${property.slug}`;
+	};
+
+	/** Handle keyboard navigation */
+	const handleKeyDown = (e: KeyboardEvent) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			handleClick();
+		}
+	};
 </script>
 
-<Card
-	class="group shadow-lg-lg hover:shadow-lg-xl overflow-hidden border-0 bg-card transition-all duration-300 hover:-translate-y-1"
+<article
+	class="group hover:shadow-lg-xl hover:shadow-lg-primary/10 cursor-pointer overflow-hidden rounded-xl border bg-card shadow-lg transition-all duration-300 hover:-translate-y-1"
+	onclick={handleClick}
+	onkeydown={handleKeyDown}
+	role="link"
+	tabindex="0"
+	aria-label="View {property.title}"
 >
-	<a href="/events/{item.slug}" class="relative aspect-4/3 overflow-hidden">
+	<!-- Image Container -->
+	<div class="relative aspect-[4/3] overflow-hidden">
 		<img
-			src="/files/{item.featuredImage}"
-			alt={item.title}
+			src="/files/{property.featuredImage}"
+			alt={property.title}
 			class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
 		/>
-		<div
-			class="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-		></div>
-		{#if item.eventType}
-			<Badge class="absolute top-4 left-4 bg-primary/90 text-primary-foreground backdrop-blur-sm">
-				{item.eventType}
-			</Badge>
-		{/if}
-	</a>
-	<CardContent class="space-y-3 p-5">
+
+		<!-- Status Badge -->
+		<div class="absolute top-3 left-3 flex gap-2">
+			{#if property.status}
+				<Badge class="bg-emerald-500 text-white hover:bg-emerald-600">Available</Badge>
+			{:else}
+				<Badge variant="secondary" class="bg-muted/90 backdrop-blur-sm">Sold</Badge>
+			{/if}
+
+			{#if property.propertyType}
+				<Badge variant="outline" class="bg-background/90 backdrop-blur-sm">
+					{property.propertyType.name}
+				</Badge>
+			{/if}
+		</div>
+
+		<!-- Price Tag -->
+		<div class="absolute right-3 bottom-3">
+			<div
+				class="shadow-lg-lg rounded-lg bg-primary px-3 py-1.5 text-sm font-bold text-primary-foreground"
+			>
+				{formatPrice(property.price, property.currency)}
+			</div>
+		</div>
+	</div>
+
+	<!-- Content -->
+	<div class="p-4">
+		<!-- Title -->
 		<h3
-			class="line-clamp-1 text-lg font-semibold text-foreground transition-colors group-hover:text-primary"
+			class="mb-2 line-clamp-1 text-lg font-semibold text-foreground transition-colors group-hover:text-primary"
 		>
-			{item.title}
+			{property.title}
 		</h3>
-		{#if item.description}
-			<p class="line-clamp-2 text-sm text-muted-foreground">
-				{item.description}
+
+		<!-- Location -->
+		{#if property.showAddressPublicly && (property.city || property.address)}
+			<div class="mb-3 flex items-center gap-1.5 text-sm text-muted-foreground">
+				<MapPinIcon class="size-4 shrink-0" />
+				<span class="line-clamp-1">
+					{#if property.address}
+						{property.address}, {property.city}
+					{:else}
+						{property.city}
+					{/if}
+				</span>
+			</div>
+		{/if}
+
+		<!-- Short Summary -->
+		{#if property.shortSummary}
+			<p class="mb-4 line-clamp-2 text-sm text-muted-foreground">
+				{property.shortSummary}
 			</p>
 		{/if}
-		<div class="flex flex-wrap gap-3 pt-2 text-xs text-muted-foreground">
-			{#if formattedDate}
-				<div class="flex items-center gap-1.5">
-					<CalendarIcon class="size-3.5" />
-					<span>{formattedDate}</span>
+
+		<!-- Property Features -->
+		<div class="flex flex-wrap items-center gap-4 border-t pt-4 text-sm text-muted-foreground">
+			{#if property.bedrooms}
+				<div class="flex items-center gap-1.5" title="Bedrooms">
+					<BedDoubleIcon class="size-4 text-primary" />
+					<span>{property.bedrooms} Beds</span>
 				</div>
 			{/if}
-			{#if item.client}
-				<div class="flex items-center gap-1.5">
-					<UserIcon class="size-3.5" />
-					<span class="max-w-24 truncate">{item.client}</span>
+
+			{#if property.bathrooms}
+				<div class="flex items-center gap-1.5" title="Bathrooms">
+					<BathIcon class="size-4 text-primary" />
+					<span>{property.bathrooms} Baths</span>
 				</div>
 			{/if}
-			{#if item.location}
-				<div class="flex items-center gap-1.5">
-					<MapPinIcon class="size-3.5" />
-					<span class="max-w-32 truncate">{item.location}</span>
+
+			{#if property.sizeSqm}
+				<div class="flex items-center gap-1.5" title="Size">
+					<RulerIcon class="size-4 text-primary" />
+					<span>{property.sizeSqm.toLocaleString()} m²</span>
+				</div>
+			{/if}
+
+			{#if property.floorNumber && property.totalFloors}
+				<div class="flex items-center gap-1.5" title="Floor">
+					<BuildingIcon class="size-4 text-primary" />
+					<span>Floor {property.floorNumber}/{property.totalFloors}</span>
 				</div>
 			{/if}
 		</div>
-	</CardContent>
-</Card>
+	</div>
+</article>

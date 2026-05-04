@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge/index.js';
-	import { BadgeCheck, Loader, OctagonMinus } from '@lucide/svelte';
+	import {
+		BadgeCheck,
+		CheckCircle2,
+		Loader,
+		MessageSquare,
+		OctagonMinus,
+		Sparkles
+	} from '@lucide/svelte';
 
 	/* ---------- public prop ---------- */
 	interface Props {
@@ -41,7 +48,11 @@
 		removable: { icon: OctagonMinus, colour: 'bg-red-500' },
 
 		/* fallback */
-		unknown: { icon: Loader, colour: 'bg-gray-500' }
+		unknown: { icon: Loader, colour: 'bg-gray-500' },
+
+		new: { icon: Sparkles, colour: 'bg-blue-500' },
+		contacted: { icon: MessageSquare, colour: 'bg-purple-500' },
+		closed: { icon: BadgeCheck, colour: 'bg-gray-500' }
 	} as const;
 
 	/* ---------- derived ---------- */

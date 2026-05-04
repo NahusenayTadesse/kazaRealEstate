@@ -32,8 +32,8 @@
 		{ title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
 
 		{
-			title: 'Quote Requests',
-			url: '/dashboard/quotes',
+			title: 'Inquiries',
+			url: '/dashboard/inquiries',
 			icon: Quote
 		},
 
