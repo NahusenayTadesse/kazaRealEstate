@@ -67,6 +67,7 @@ export const actions: Actions = {
 			floorNumber,
 			yearBuilt,
 			image,
+			plan,
 			gallery,
 			propertyType,
 			amenities,
@@ -75,11 +76,6 @@ export const actions: Actions = {
 		} = form.data;
 
 		const result = await db.transaction(async (tx) => {
-			// 1. Upload images first (usually done before the DB transaction starts
-			// to avoid keeping a DB connection open during slow network I/O)
-			//
-			// let newSlug: string;
-			//
 			let newSlug: string;
 
 			const existingSlug = await tx
@@ -95,6 +91,7 @@ export const actions: Actions = {
 			}
 
 			const featuredImage = await saveUploadedFile(image);
+			const rawPlan = plan ? await saveUploadedFile(plan) : null;
 			const galleryImages = await uploadGallery(gallery);
 
 			// 2. Insert the main product
@@ -102,7 +99,7 @@ export const actions: Actions = {
 				.insert(inventory)
 				.values({
 					title,
-					slug,
+					slug: newSlug,
 					shortSummary,
 					description,
 					price,
@@ -115,6 +112,7 @@ export const actions: Actions = {
 					bedrooms,
 					bathrooms,
 					sizeSqm,
+					rawPlan,
 					floorNumber,
 					yearBuilt,
 					featuredImage,

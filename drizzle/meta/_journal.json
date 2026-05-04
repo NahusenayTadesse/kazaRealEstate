@@ -29,6 +29,27 @@
       "when": 1777879368234,
       "tag": "0003_light_runaways",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1777905240487,
+      "tag": "0004_black_snowbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1777908518296,
+      "tag": "0005_complex_thundra",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1777909277065,
+      "tag": "0006_motionless_vengeance",
+      "breakpoints": true
     }
   ]
 }

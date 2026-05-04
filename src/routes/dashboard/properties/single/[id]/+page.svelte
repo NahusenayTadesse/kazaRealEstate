@@ -51,9 +51,8 @@
 	import Gallery from '$lib/components/gallery.svelte';
 	import EditGallery from './editGallery.svelte';
 	import { formatEthiopianDate } from '$lib/global.svelte.js';
-	import RichTextEditor from '$lib/formComponents/RichTextEditor.svelte';
 	import VideoViewer from '$lib/components/Table/videoViewer.svelte';
-	import AddFeatures from './addFeatures.svelte';
+	import ImageViewer from '$lib/components/Table/image-viewer.svelte';
 	$effect(() => {
 		if ($message) {
 			if ($message.type === 'error') {
@@ -153,6 +152,24 @@
 					>
 						{@html data?.product?.description}
 					</div>
+				</div>
+			</article>
+
+			<article class="max-auto mx-auto w-full max-w-4xl px-6 py-12">
+				<div
+					class="items-center justify-center rounded-2xl border border-slate-100 bg-white p-8 shadow-sm md:p-12"
+				>
+					<!-- Section Header -->
+					<h2
+						class="mb-6 border-b border-slate-100 pb-4 text-3xl font-bold tracking-tight text-slate-900"
+					>
+						Raw Plan
+					</h2>
+					<div class="p-3 sm:p-6">
+						<ImageViewer class="h-full! w-full!" src={data?.product?.rawPlan} alt="Raw Plan" />
+					</div>
+
+					<!-- Injected Content -->
 				</div>
 			</article>
 
@@ -429,7 +446,16 @@
 						placeholder="Upload Property Featured Image"
 						required
 					/>
-
+					<InputComp
+						{form}
+						{errors}
+						type="file"
+						name="plan"
+						label="Property Plan"
+						image={data?.product?.rawPlan ?? ''}
+						placeholder="Upload Property Plan"
+						required
+					/>
 					<InputComp
 						{form}
 						{errors}

@@ -1,3 +1,4 @@
+import type { Plane } from '@lucide/svelte';
 import { z } from 'zod/v4';
 
 export const add = z.object({
@@ -31,6 +32,7 @@ export const add = z.object({
 	// --- Media ---
 	// Note: For SvelteKit File uploads, we validate the File object
 	image: z.file('Featured Image is required').max(10000000),
+	plan: z.file().max(10000000).optional(),
 	gallery: z.file().max(10000000).array().optional(),
 
 	videoTourUrl: z.url('Please enter a valid YouTube/Video URL').optional()

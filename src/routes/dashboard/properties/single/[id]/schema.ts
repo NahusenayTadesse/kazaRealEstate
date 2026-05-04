@@ -31,6 +31,7 @@ export const edit = z.object({
 	// --- Media ---
 	// Note: For SvelteKit File uploads, we validate the File object
 	image: z.file('Featured Image is required').max(10000000).optional(),
+	plan: z.file('Featured Image is required').max(10000000).optional(),
 	videoTourUrl: z.url('Please enter a valid YouTube/Video URL').optional()
 });
 

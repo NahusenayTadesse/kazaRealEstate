@@ -261,6 +261,16 @@
 			<InputComp
 				{form}
 				{errors}
+				type="file"
+				name="plan"
+				label="Property Raw Plan"
+				placeholder="Upload Property Raw Plan"
+				required
+			/>
+
+			<InputComp
+				{form}
+				{errors}
 				type="gallery"
 				name="gallery"
 				label="Property Gallery Images"
@@ -277,8 +287,8 @@
 				label="Featured Tour URL"
 				placeholder="Enter Featured Video Youtube Tour URL"
 			/>
-			{#if $form.videoTourUrl}
-				<VideoViewer videoUrl={$form.videoTourUrl} class="max-h-lg! max-w-lg!" />
+			{#if $form?.videoTourUrl}
+				<VideoViewer videoUrl={$form?.videoTourUrl} class="max-h-lg! max-w-lg!" />
 			{/if}
 		</section>
 
@@ -298,7 +308,7 @@
 			{errors}
 			type="hidden"
 			name="slug"
-			label="Enter Property Slug"
+			label=""
 			placeholder="Enter Slug"
 			required
 		/>

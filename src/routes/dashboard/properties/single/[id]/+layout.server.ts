@@ -21,18 +21,10 @@ import {
 } from '$lib/server/db/schema';
 import { eq, sql, getTableColumns } from 'drizzle-orm';
 import type { LayoutServerLoad } from './$types';
+import { error } from '@sveltejs/kit';
 
 export const load: LayoutServerLoad = async ({ params }) => {
 	const { id } = params;
-
-	const result = await db
-		.select({
-			url: productImages.imageUrl
-		})
-		.from(productImages)
-		.where(eq(productImages.propertyId, Number(id)));
-
-	const images = result.map((img) => img.url);
 
 	const product = await db
 		.select({
@@ -44,6 +36,17 @@ export const load: LayoutServerLoad = async ({ params }) => {
 		.where(eq(event.id, Number(id)))
 		.limit(1)
 		.then((rows) => rows[0]);
+
+	if (!product) return error(404, 'Property Not Found');
+
+	const result = await db
+		.select({
+			url: productImages.imageUrl
+		})
+		.from(productImages)
+		.where(eq(productImages.propertyId, Number(id)));
+
+	const images = result.map((img) => img.url);
 
 	const types = await db
 		.select({

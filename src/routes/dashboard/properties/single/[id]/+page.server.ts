@@ -52,6 +52,7 @@ export const actions: Actions = {
 			floorNumber,
 			yearBuilt,
 			image,
+			plan,
 			propertyType,
 			amenities,
 			totalFloors,
@@ -109,18 +110,24 @@ export const actions: Actions = {
 						videoTourUrl
 					})
 					.where(eq(products.id, Number(id)));
+			}
 
-				if (amenities.length > 0) {
-					const imageRecords = amenities.map((url) => ({
-						propertyId: Number(id),
-						amenityId: url
-					}));
+			if (plan) {
+				const rawPlan = await saveUploadedFile(plan);
+				await db
+					.update(products)
+					.set({ rawPlan })
+					.where(eq(products.id, Number(id)));
+			}
 
-					await db
-						.delete(propertyToAmenities)
-						.where(eq(propertyToAmenities.propertyId, Number(id)));
-					await db.insert(propertyToAmenities).values(imageRecords);
-				}
+			if (amenities.length > 0) {
+				const imageRecords = amenities.map((url) => ({
+					propertyId: Number(id),
+					amenityId: url
+				}));
+
+				await db.delete(propertyToAmenities).where(eq(propertyToAmenities.propertyId, Number(id)));
+				await db.insert(propertyToAmenities).values(imageRecords);
 			}
 
 			return message(form, { type: 'success', text: 'Venue Updated Successfully' });
@@ -183,16 +190,16 @@ export const actions: Actions = {
 				// even if galleryImages.length is 0 (e.g., you just deleted an old photo)
 				if (finalList.length > 0) {
 					const imageRecords = finalList.map((url) => ({
-						venueId: Number(id),
+						propertyId: Number(id),
 						imageUrl: url
 					}));
 
 					// Wipe the old associations and replace with the new "finalList"
-					await tx.delete(productImages).where(eq(productImages.venueId, Number(id)));
+					await tx.delete(productImages).where(eq(productImages.propertyId, Number(id)));
 					await tx.insert(productImages).values(imageRecords);
 				} else {
 					// Handle the case where all images were removed
-					await tx.delete(productImages).where(eq(productImages.venueId, Number(id)));
+					await tx.delete(productImages).where(eq(productImages.propertyId, Number(id)));
 				}
 			});
 

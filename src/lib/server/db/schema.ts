@@ -20,7 +20,9 @@ export const properties = sqliteTable('properties', {
 	shortSummary: text('short_summary'),
 
 	// Basic Info
-	propertyType: integer('property_type').references(() => propertyTypes.id),
+	propertyType: integer('property_type').references(() => propertyTypes.id, {
+		onDelete: 'set null'
+	}),
 	listingType: text('listing_type').notNull(),
 	status: integer('status', { mode: 'boolean' }).default(true),
 
@@ -45,6 +47,7 @@ export const properties = sqliteTable('properties', {
 
 	// Media
 	featuredImage: text('featured_image').notNull(),
+	rawPlan: text('raw_plan'),
 	videoTourUrl: text('video_tour_url'),
 
 	createdAt: integer('created_at', { mode: 'timestamp' }).$defaultFn(() => new Date())
@@ -58,8 +61,8 @@ export const amenities = sqliteTable('amenities', {
 
 export const propertyToAmenities = sqliteTable('property_to_amenities', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	propertyId: integer('property_id').references(() => properties.id),
-	amenityId: integer('amenity_id').references(() => amenities.id)
+	propertyId: integer('property_id').references(() => properties.id, { onDelete: 'cascade' }),
+	amenityId: integer('amenity_id').references(() => amenities.id, { onDelete: 'set null' })
 });
 
 /**
@@ -67,7 +70,7 @@ export const propertyToAmenities = sqliteTable('property_to_amenities', {
  */
 export const propertyImages = sqliteTable('property_images', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
-	propertyId: integer('property_id').references(() => properties.id),
+	propertyId: integer('property_id').references(() => properties.id, { onDelete: 'cascade' }),
 	imageUrl: text('url').notNull(),
 	displayOrder: integer('display_order').default(0)
 });

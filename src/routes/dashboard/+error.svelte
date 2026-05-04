@@ -13,7 +13,7 @@
 </script>
 
 <svelte:head>
-	<title>{status} | Yebehir Ventures</title>
+	<title>{status}</title>
 </svelte:head>
 
 <div class="relative min-h-dvh w-full overflow-hidden bg-background transition-colors duration-300">
@@ -41,13 +41,7 @@
 		</p>
 
 		<h1 class="mt-4 text-3xl font-bold tracking-tight text-destructive sm:text-5xl">
-			{#if status === 404}
-				Event Not Found
-			{:else if status === 500}
-				System Disruption
-			{:else}
-				Something went wrong
-			{/if}
+			{message}
 		</h1>
 
 		<p class="mt-6 max-w-md text-lg leading-7 text-muted-foreground">
