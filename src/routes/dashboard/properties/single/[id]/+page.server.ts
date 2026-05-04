@@ -13,10 +13,10 @@ import {
 
 import { db } from '$lib/server/db';
 import {
-	venueDetails as products,
-	venueImages as productImages,
-	venueFeatures as paymentMethods,
-	venueVideos
+	properties as products,
+	propertyImages as productImages,
+	amenities as paymentMethods,
+	propertyToAmenities
 } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { fail, message } from 'sveltekit-superforms';
@@ -26,7 +26,7 @@ import { saveUploadedFile } from '$lib/server/upload';
 import type { Actions } from './$types';
 
 export const actions: Actions = {
-	editProduct: async ({ request, cookies, locals, params }) => {
+	editProduct: async ({ request, cookies, params }) => {
 		const { id } = params;
 		const form = await superValidate(request, zod4(edit));
 		console.log(form.data);
@@ -37,7 +37,26 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		const { name, capacity, bookingPolicy, image, location, description } = form.data;
+		const {
+			title,
+			shortSummary,
+			description,
+			city,
+			slug,
+			address,
+			googleMapsUrl,
+			bedrooms,
+			bathrooms,
+			price,
+			sizeSqm,
+			floorNumber,
+			yearBuilt,
+			image,
+			propertyType,
+			amenities,
+			totalFloors,
+			videoTourUrl
+		} = form.data;
 
 		try {
 			if (image) {
@@ -46,28 +65,62 @@ export const actions: Actions = {
 				await db
 					.update(products)
 					.set({
-						name,
-						capacity,
-						bookingPolicy,
-						location,
+						title,
+						shortSummary,
 						description,
+						city,
+						slug,
+						address,
+						googleMapsUrl,
+						bedrooms,
+						bathrooms,
+						price,
+						sizeSqm,
+						floorNumber,
+						yearBuilt,
 						featuredImage,
-						updatedBy: locals?.user?.id
+
+						propertyType,
+						totalFloors,
+						videoTourUrl
 					})
 					.where(eq(products.id, Number(id)));
 			} else {
 				await db
 					.update(products)
 					.set({
-						name,
-						capacity,
-						bookingPolicy,
-
-						location,
+						title,
+						shortSummary,
 						description,
-						updatedBy: locals?.user?.id
+						city,
+						slug,
+						address,
+						googleMapsUrl,
+						bedrooms,
+						bathrooms,
+						price,
+						sizeSqm,
+						floorNumber,
+						yearBuilt,
+
+						propertyType,
+
+						totalFloors,
+						videoTourUrl
 					})
 					.where(eq(products.id, Number(id)));
+
+				if (amenities.length > 0) {
+					const imageRecords = amenities.map((url) => ({
+						propertyId: Number(id),
+						amenityId: url
+					}));
+
+					await db
+						.delete(propertyToAmenities)
+						.where(eq(propertyToAmenities.propertyId, Number(id)));
+					await db.insert(propertyToAmenities).values(imageRecords);
+				}
 			}
 
 			return message(form, { type: 'success', text: 'Venue Updated Successfully' });

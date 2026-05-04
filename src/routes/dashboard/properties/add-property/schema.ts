@@ -12,7 +12,7 @@ export const add = z.object({
 	// --- Location ---
 	city: z.string().min(1, { message: 'City is required' }),
 	address: z.string().min(1, { message: 'Address is required' }),
-	googleMapUrl: z.string().optional(),
+	googleMapsUrl: z.string().optional(),
 
 	// --- Specs (Coerce strings to numbers since form data is always strings) ---
 	bedrooms: z.coerce.number().int().positive(),
@@ -33,5 +33,5 @@ export const add = z.object({
 	image: z.file('Featured Image is required').max(10000000),
 	gallery: z.file().max(10000000).array().optional(),
 
-	featuredTourUrl: z.url('Please enter a valid YouTube/Video URL').optional()
+	videoTourUrl: z.url('Please enter a valid YouTube/Video URL').optional()
 });

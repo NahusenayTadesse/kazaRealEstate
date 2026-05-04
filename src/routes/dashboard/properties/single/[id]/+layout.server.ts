@@ -45,6 +45,13 @@ export const load: LayoutServerLoad = async ({ params }) => {
 		.limit(1)
 		.then((rows) => rows[0]);
 
+	const types = await db
+		.select({
+			value: propertyTypes.id,
+			name: propertyTypes.name
+		})
+		.from(propertyTypes);
+
 	const features = await db
 		.select({
 			id: venueFeatures.id,
@@ -52,15 +59,26 @@ export const load: LayoutServerLoad = async ({ params }) => {
 			description: venueFeatures.description
 		})
 		.from(propertyToAmenities)
-		.leftJoin(venueFeatures, eq(venueFeatures.id, propertyToAmenities.id))
+		.leftJoin(venueFeatures, eq(venueFeatures.id, propertyToAmenities.amenityId))
 		.where(eq(propertyToAmenities.propertyId, Number(id)));
+
+	const amenity = await db
+		.select({
+			value: venueFeatures.id,
+			name: venueFeatures.name,
+			description: venueFeatures.description
+		})
+		.from(venueFeatures);
 
 	const addForm = await superValidate(zod4(addFeature));
 	const addVideoForm = await superValidate(zod4(addVideo));
 	const editForm = await superValidate(zod4(editFeature));
 	const editVideoForm = await superValidate(zod4(editVideo));
 	const deleteForm = await superValidate(zod4(deleteFeature));
-	const form = await superValidate(product, zod4(edit));
+	const form = await superValidate(
+		{ ...product, amenities: features.map((f) => f.id) },
+		zod4(edit)
+	);
 	const galleryEdit = await superValidate(zod4(editGallery));
 
 	return {
@@ -70,8 +88,10 @@ export const load: LayoutServerLoad = async ({ params }) => {
 		editVideoForm,
 		editForm,
 		deleteForm,
+		amenity,
 		form,
 		images,
+		types,
 		features,
 		galleryEdit
 	};

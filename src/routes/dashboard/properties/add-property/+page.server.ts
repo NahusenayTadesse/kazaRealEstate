@@ -59,7 +59,7 @@ export const actions: Actions = {
 			city,
 			slug,
 			address,
-			googleMapUrl,
+			googleMapsUrl,
 			bedrooms,
 			bathrooms,
 			price,
@@ -71,7 +71,7 @@ export const actions: Actions = {
 			propertyType,
 			amenities,
 			totalFloors,
-			featuredTourUrl
+			videoTourUrl
 		} = form.data;
 
 		const result = await db.transaction(async (tx) => {
@@ -109,7 +109,7 @@ export const actions: Actions = {
 					city,
 					address,
 					listingType: 'Sale',
-					googleMapUrl,
+					googleMapsUrl,
 					totalFloors,
 					propertyType,
 					bedrooms,
@@ -119,7 +119,7 @@ export const actions: Actions = {
 					yearBuilt,
 					featuredImage,
 					gallery,
-					featuredTourUrl,
+					videoTourUrl,
 					createdBy: locals?.user?.id
 				})
 				.returning();
@@ -161,7 +161,7 @@ export const actions: Actions = {
 		} else {
 			message(form, { type: 'success', text: 'New Property Successfully Added' });
 			redirect(
-				`/dashboard/venues/single/${result}`,
+				`/dashboard/properties/single/${result}`,
 				{ type: 'success', message: 'New Property Successfully Added' },
 				cookies
 			);

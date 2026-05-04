@@ -35,6 +35,7 @@
 	export const snapshot: Snapshot = { capture, restore };
 
 	import { toast } from 'svelte-sonner';
+	import VideoViewer from '$lib/components/Table/videoViewer.svelte';
 	$effect(() => {
 		if ($message) {
 			if ($message.type === 'error') {
@@ -165,10 +166,14 @@
 				{form}
 				{errors}
 				type="textarea"
-				name="googleMapUrl"
+				name="googleMapsUrl"
 				label="Google Map URL"
 				placeholder="Enter Google Map Embed URL"
 			/>
+
+			{#if $form.googleMapsUrl}
+				{@html $form.googleMapsUrl}
+			{/if}
 		</section>
 
 		<!-- SECTION 3: SPECIFICATIONS -->
@@ -268,14 +273,17 @@
 				{form}
 				{errors}
 				type="url"
-				name="featuredTourUrl"
+				name="videoTourUrl:"
 				label="Featured Tour URL"
 				placeholder="Enter Featured Video Youtube Tour URL"
 			/>
+			{#if $form.videoTourUrl}
+				<VideoViewer videoUrl={$form.videoTourUrl} class="max-h-lg! max-w-lg!" />
+			{/if}
 		</section>
 
 		<div class="pt-6">
-			<Button type="submit" class="w-full px-8 md:w-max" form="main">
+			<Button type="submit" class="w-full px-8" form="main">
 				{#if $delayed}
 					<LoadingBtn name="Adding Venue" />
 				{:else}
