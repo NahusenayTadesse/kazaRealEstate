@@ -5,57 +5,50 @@
 		AccordionTrigger,
 		AccordionContent
 	} from '$lib/components/ui/accordion';
-	import {
-		CalendarHeartIcon,
-		MapPin,
-		TrendingUpIcon,
-		QuoteIcon,
-		CoffeeIcon,
-		ZapIcon
-	} from '@lucide/svelte';
+	import { MapPin, House, Globe, Phone, ShieldCheck, Banknote } from '@lucide/svelte';
 
 	const features = [
 		{
-			id: 'event-management',
-			title: 'What types of events do you manage?',
+			id: 'property-types',
+			title: 'What types of properties do you list?',
 			description:
-				'We provide full-service management for corporate events, brand activations, and private functions, focusing on creating cinematic and high-energy experiences.',
-			icon: CalendarHeartIcon
+				'We specialize in modern residential and commercial properties across Addis Ababa, including luxury apartments, villas, and prime land listings for sale and rent.',
+			icon: House
 		},
 		{
-			id: 'venue-booking',
-			title: 'How can I book 4 Kilo Plaza?',
+			id: 'service-locations',
+			title: 'Which areas of Addis Ababa do you cover?',
 			description:
-				'You can request a booking for our central Addis Ababa venue directly through our "Request a Quote" system for corporate meetings, lifestyle events, or private gatherings.',
+				'Our core operations are centered in premium neighborhoods such as Bole, Kazanchis, Sarbet, Piassa, and CMC.',
 			icon: MapPin
 		},
 		{
-			id: 'sponsorship-sales',
-			title: 'Do you offer brand partnership opportunities?',
+			id: 'diaspora-services',
+			title: 'Do you offer services for Diaspora clients?',
 			description:
-				'Yes, we act as a sales and sponsorship platform, connecting brands with audiences through event-based marketing and sponsorship acquisition.',
-			icon: TrendingUpIcon
+				'Yes, we provide specialized support for Diaspora clients, ensuring a professional and transparent process for property acquisition and investment from abroad.',
+			icon: Globe
 		},
 		{
-			id: 'quote-process',
-			title: 'How do I get a price estimate for my event?',
+			id: 'viewing-contact',
+			title: 'How can I schedule a property viewing?',
 			description:
-				'Submit a request via our Quote Form with your event date, location, budget range, and estimated number of guests to receive a tailored proposal.',
-			icon: QuoteIcon
+				'You can call us directly, send a message via WhatsApp, or fill out the inquiry form on the property listing page to arrange a visit[cite: 1].',
+			icon: Phone
 		},
 		{
-			id: 'catering-services',
-			title: 'Do you provide catering and add-ons?',
+			id: 'amenities-standards',
+			title: 'What features come standard with your listings?',
 			description:
-				'Beyond management and venue rental, we offer integrated catering solutions including coffee and food services to complement your event.',
-			icon: CoffeeIcon
+				'Most of our modern apartments and villas include essential amenities such as 24/7 security, dedicated parking, elevators, backup generators, and water tanks[cite: 1].',
+			icon: ShieldCheck
 		},
 		{
-			id: 'differentiation',
-			title: 'What makes Yebehir Ventures different?',
+			id: 'currency-payments',
+			title: 'Which currencies do you accept for transactions?',
 			description:
-				'We are a multi-service hybrid that combines event management with venue operations and revenue-driven sales tools to monetize every experience.',
-			icon: ZapIcon
+				'While our primary pricing is listed in Ethiopian Birr (ETB), we can facilitate discussions regarding various payment structures depending on the specific property and client requirements[cite: 1].',
+			icon: Banknote
 		}
 	];
 </script>
@@ -67,9 +60,7 @@
 		<!-- Header -->
 		<div class="mb-12 text-center">
 			<h1 class="mb-4 text-4xl font-bold text-foreground sm:text-5xl">FAQ</h1>
-			<p class="text-lg text-muted-foreground">
-				Frequently asked questions about our products and services.
-			</p>
+			<p class="text-lg text-muted-foreground">Frequently asked questions about our services.</p>
 		</div>
 
 		<!-- Accordion -->

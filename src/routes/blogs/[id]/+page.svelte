@@ -26,12 +26,11 @@
 
 <svelte:head>
 	<!-- Primary Meta Tags -->
-	<title>{post.title} | Yebehir Ventures Blog</title>
-	<meta name="title" content="{post.title} | Yebehir Ventures" />
+	<title>{post.title} | Kaza Real Estate Blog</title>
+	<meta name="title" content="{post.title} | Kaza Real Estate" />
 	<meta
 		name="description"
-		content={post.excerpt ||
-			'Read the latest from Yebehir Ventures about events, venues, and brand experiences in Addis Ababa.'}
+		content={post.excerpt || 'Read the latest from Kaza Real Estate about houses in Addis Ababa.'}
 	/>
 
 	<!-- Open Graph / Facebook -->

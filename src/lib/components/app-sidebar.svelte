@@ -36,14 +36,13 @@
 			url: '/dashboard/inquiries',
 			icon: Quote
 		},
-
 		{
-			title: 'Events & Portfolio',
-			url: '/dashboard/events',
-			icon: Briefcase,
+			title: 'Propeties',
+			url: '/dashboard/properties',
+			icon: House,
 			items: [
-				{ title: 'All Portfolio Items', url: '/dashboard/events', icon: Sheet },
-				{ title: 'Add Event', url: '/dashboard/events/add-event', icon: Plus }
+				{ title: 'Add New Property', url: '/dashboard/properties/add-property', icon: Plus },
+				{ title: 'View All Properties', url: '/dashboard/properties', icon: Sheet }
 			]
 		},
 
@@ -54,16 +53,6 @@
 			items: [
 				{ title: 'Add New Blog', url: '/dashboard/blog/add-blog', icon: Plus },
 				{ title: 'View All Blogs', url: '/dashboard/blog', icon: Sheet }
-			]
-		},
-
-		{
-			title: 'Propeties',
-			url: '/dashboard/properties',
-			icon: House,
-			items: [
-				{ title: 'Add New Property', url: '/dashboard/properties/add-property', icon: Plus },
-				{ title: 'View All Properties', url: '/dashboard/properties', icon: Sheet }
 			]
 		},
 
@@ -130,9 +119,8 @@
 					title="Go to Website Home Page"
 					target="_blank"
 				>
-					<img src="/logoDark.webp" class="block h-16 w-16 object-contain dark:hidden" alt="Logo" />
-					<img src="/logo.webp" class="hidden h-16 w-16 object-contain dark:block" alt="Logo" />
-					<h4 class="text-center text-[16px]! font-bold">Kaza Real Estate</h4>
+					<img src="/logo.webp" class="block h-16 w-auto object-contain dark:hidden" alt="Logo" />
+					<img src="/logo.webp" class="hidden h-16 w-auto object-contain dark:block" alt="Logo" />
 				</a>
 			</Sidebar.GroupLabel>
 

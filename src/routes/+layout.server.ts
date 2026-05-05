@@ -1,7 +1,14 @@
 import { db } from '$lib/server/db';
 import { eq, getTableColumns } from 'drizzle-orm';
 
-import { testimonials, blog, blogCategories, gallery, properties } from '$lib/server/db/schema';
+import {
+	testimonials,
+	blog,
+	blogCategories,
+	gallery,
+	properties,
+	propertyTypes
+} from '$lib/server/db/schema';
 import type { LayoutServerLoad } from './$types';
 export const load: LayoutServerLoad = async () => {
 	// First, get products
@@ -16,7 +23,13 @@ export const load: LayoutServerLoad = async () => {
 		.from(testimonials);
 
 	// Then, get services
-	const portfolioItems = await db.select().from(properties);
+	const portfolioItems = await db
+		.select({
+			...getTableColumns(properties),
+			propertyType: propertyTypes.name
+		})
+		.from(properties)
+		.leftJoin(propertyTypes, eq(properties.propertyType, propertyTypes.id));
 
 	const blogItems = await db
 		.select({

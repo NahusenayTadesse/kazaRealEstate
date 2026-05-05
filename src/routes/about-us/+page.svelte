@@ -1,63 +1,90 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
+	import { Badge } from '$lib/components/ui/badge';
+	import { Card, CardHeader, CardTitle, CardDescription } from '$lib/components/ui/card';
 	import {
+		BuildingIcon,
+		AwardIcon,
+		MapPin,
+		Heart,
+		Shield,
 		ArrowRightIcon,
-		CalendarHeartIcon,
-		MapPinIcon,
-		TrendingUpIcon,
-		BadgeCheckIcon,
-		ZapIcon,
-		UsersIcon,
-		Send,
-		PhoneIcon,
-		QuoteIcon,
-		CoffeeIcon,
-		MicIcon
+		Phone,
+		Mail
 	} from '@lucide/svelte';
-	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
-	import { IconBrandFacebook, IconBrandInstagram, IconBrandTiktok } from '@tabler/icons-svelte';
-	import FAQ from '$lib/components/faq.svelte';
-	import Slider from '$lib/components/slider.svelte';
-	import Catalog from '$lib/components/catalog.svelte';
-	import Testimonial from '$lib/components/testimonial.svelte';
-	import ServiceGrid from '$lib/components/services/service-grid.svelte';
+	import { fade, fly } from 'svelte/transition';
 
-	const socialLinks = [
-		{ name: 'Instagram', url: '#', icon: IconBrandInstagram, color: 'hover:text-primary' },
-		{ name: 'TikTok', url: '#', icon: IconBrandTiktok, color: 'hover:text-primary' },
-		{ name: 'Facebook', url: '#', icon: IconBrandFacebook, color: 'hover:text-primary' },
-		{ name: 'Telegram', url: '#', icon: Send, color: 'hover:text-primary' }
+	import {
+		ShieldCheckIcon,
+		HeartIcon,
+		MapPinIcon,
+		GemIcon,
+		SparklesIcon,
+		HandshakeIcon
+	} from '@lucide/svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import Testimonial from '$lib/components/testimonial.svelte';
+	import Slider from '$lib/components/slider.svelte';
+	import Faq from '$lib/components/faq.svelte';
+
+	const stats = [
+		{
+			value: '100+',
+			label: 'Properties Sold',
+			description: 'Premium homes delivered to satisfied families'
+		},
+		{
+			value: '12+',
+			label: 'Years Experience',
+			description: 'Trusted expertise in Addis Ababa real estate'
+		},
+		{
+			value: '2.5B+',
+			label: 'ETB in Sales',
+			description: 'Total property value transacted'
+		},
+		{
+			value: '98%',
+			label: 'Client Satisfaction',
+			description: 'Clients who recommend our services'
+		}
 	];
 
-	// Business Units based on the Project Brief
-	const units = [
+	const coreValues = [
 		{
-			name: 'Yebehir Events',
+			title: 'Integrity First',
 			description:
-				'Full-service event management specializing in corporate clients, brand activations, and high-energy private events with a focus on cinematic experiences.',
-			icon: CalendarHeartIcon,
-			short: 'EVENTS'
+				'We believe in complete transparency. Every property listing, every price, every detail is presented honestly to help you make informed decisions.',
+			icon: Shield
 		},
 		{
-			name: '4 Kilo Plaza',
+			title: 'Client-Centric',
 			description:
-				'Our central, flexible venue in Addis Ababa. Designed for corporate meetings, lifestyle events, and brand showcases with premium amenities.',
-			icon: MapPinIcon,
-			short: 'VENUE'
+				'Your dream home is our mission. We listen, understand, and work tirelessly to match you with properties that fit your lifestyle and aspirations.',
+			icon: Heart
 		},
 		{
-			name: 'Sales & Sponsorship',
+			title: 'Local Expertise',
 			description:
-				'Strategic partnership acquisition and event-based marketing. We connect global and local brands with target audiences to generate revenue.',
-			icon: TrendingUpIcon,
-			short: 'SALES'
+				'Born and raised in Addis Ababa, we know every neighborhood, every emerging area, and every hidden gem the city has to offer.',
+			icon: MapPin
 		},
 		{
-			name: 'Brand Activations',
+			title: 'Premium Quality',
 			description:
-				'Creating high-impact experiences that build brand credibility and engage the youth market in Addis Ababa.',
-			icon: ZapIcon,
-			short: 'BRAND'
+				'We curate only the finest properties. Each listing undergoes rigorous verification to ensure it meets our high standards.',
+			icon: GemIcon
+		},
+		{
+			title: 'Innovation',
+			description:
+				'From virtual tours to digital contracts, we leverage technology to make your property journey seamless and modern.',
+			icon: SparklesIcon
+		},
+		{
+			title: 'Long-term Partnership',
+			description:
+				"Our relationship doesn't end at closing. We're your lifelong real estate partners for all future property needs.",
+			icon: HandshakeIcon
 		}
 	];
 
@@ -65,302 +92,160 @@
 </script>
 
 <svelte:head>
-	<!-- Primary Meta Tags -->
-	<title>About Us | Event Management & 4 Kilo Plaza Venue Addis Ababa</title>
-	<meta
-		name="title"
-		content="Yebehir Ventures | Event Management & 4 Kilo Plaza Venue Addis Ababa"
-	/>
+	<title>About Us | Luxury Apartments & Villas in Addis Ababa</title>
 	<meta
 		name="description"
-		content="Ahead of the curve. Yebehir Ventures provides premium event management, corporate brand experiences, and venue rentals at 4 Kilo Plaza, Addis Ababa."
+		content="Kaza Real Estate and Trading PLC offers premium property sales and rentals in Addis Ababa. Specialized services for Diaspora and local investors in Bole, CMC, and beyond."
 	/>
 	<meta
 		name="keywords"
-		content="Yebehir Ventures, Event Management Ethiopia, 4 Kilo Plaza, Venue Rental Addis Ababa, Corporate Events Addis, Brand Activations Ethiopia, Sponsorship Marketing"
+		content="Real Estate Ethiopia, Apartments for sale Addis Ababa, Kaza Real Estate, Diaspora housing Ethiopia, Luxury villas Addis"
 	/>
 
 	<!-- Open Graph / Facebook -->
 	<meta property="og:type" content="website" />
-	<meta property="og:url" content="https://yebehir.com/" />
-	<meta property="og:title" content="Yebehir Ventures | Ahead of the curve" />
+	<meta property="og:url" content="https://kazarealestateet.com/" />
+	<meta property="og:title" content="Kaza Real Estate | Modern & Professional Property Solutions" />
 	<meta
 		property="og:description"
-		content="We create, manage, and monetize events. Discover full-service event production and venue bookings at 4 Kilo Plaza."
+		content="Discover your dream home in Addis Ababa with Kaza. Modern apartments and villas with 24/7 security and premium amenities."
 	/>
 	<meta property="og:image" content="/logo.png" />
 
 	<!-- Twitter -->
 	<meta property="twitter:card" content="summary_large_image" />
-	<meta property="twitter:url" content="https://yebehir.com/" />
-	<meta property="twitter:title" content="Yebehir Ventures | Event Management & Venue Operations" />
+	<meta property="twitter:title" content="Kaza Real Estate | Luxury Properties in Addis Ababa" />
 	<meta
 		property="twitter:description"
-		content="Leading multi-service event company in Addis Ababa. Specializing in event production, venue operations, and sales-driven brand experiences."
+		content="Specializing in high-end residential and commercial properties for local and Diaspora clients."
 	/>
 	<meta property="twitter:image" content="/logo.png" />
-
-	<!-- Canonical URL -->
-	<link rel="canonical" href="https://yebehir.com/" />
-
-	<!-- Favicon / Theming -->
-	<link rel="icon" type="image/png" href="/logo.png" />
-	<meta name="theme-color" content="#091B38" />
 </svelte:head>
 
 <section
-	class="relative overflow-hidden bg-muted/30 bg-cover bg-center px-4 py-20 text-white sm:py-32"
-	style="background-image: url('/event (3).webp')"
+	class="relative overflow-hidden bg-linear-to-br from-secondary via-secondary/80 to-background py-20 lg:py-32"
 >
-	<div class="absolute inset-0 bg-primary/60"></div>
-
-	<div class="relative z-10 mx-auto max-w-4xl space-y-6 text-center">
+	<!-- Background Pattern -->
+	<div class="absolute inset-0 opacity-5">
 		<div
-			class="inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-medium tracking-widest text-white uppercase"
-		>
-			Ahead of the curve
-		</div>
+			class="absolute inset-0"
+			style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"
+		></div>
+	</div>
 
-		<h1
-			class="text-center text-4xl font-extrabold tracking-tight text-accent sm:text-5xl lg:text-6xl"
-		>
-			We Create, Manage & <span class="text-primary">Monetize</span> Events.
-		</h1>
+	<div class="relative container mx-auto px-4">
+		<div class="mx-auto max-w-4xl text-center">
+			<div in:fade={{ duration: 600 }} class="mb-6 flex items-center justify-center gap-2">
+				<Badge variant="outline" class="border-primary/30 bg-primary/10 px-4 py-1.5 text-primary">
+					<AwardIcon class="mr-2 size-4" />
+					Established 2012
+				</Badge>
+			</div>
 
-		<p class="mx-auto max-w-2xl text-lg text-accent sm:text-xl">
-			A multi-service platform in Addis Ababa integrating event management, premium venue providing,
-			and sales-driven brand partnerships.
-		</p>
-
-		<div class="flex flex-col justify-center gap-4 pt-4 sm:flex-row">
-			<Button size="lg" href="/quote" class="gap-2">
-				Request a Quote
-				<ArrowRightIcon class="size-4" />
-			</Button>
-			<Button href="/services" size="lg" class="text-primary dark:text-white" variant="outline"
-				>Our Services</Button
+			<h1
+				in:fly={{ y: 30, duration: 700, delay: 100 }}
+				class="mb-6 text-4xl font-bold tracking-tight text-secondary-foreground sm:text-5xl lg:text-6xl"
 			>
-		</div>
+				Building Dreams,
+				<br />
+				<span class="text-primary">One Home at a Time</span>
+			</h1>
 
-		<div
-			class="flex flex-col items-center justify-between gap-4 border-t border-border pt-8 md:flex-row"
-		>
-			<p class="text-sm text-muted-foreground">Join our community</p>
-			<div class="grid grid-cols-4 gap-3">
-				{#each socialLinks as social}
-					<a
-						href={social.url}
-						class="flex flex-col items-center gap-2 rounded-lg border border-border p-4 transition-all hover:border-primary hover:bg-primary/5 {social.color}"
-					>
-						<social.icon class="h-6 w-6" />
-					</a>
-				{/each}
-			</div>
-		</div>
-	</div>
-</section>
-
-<section class="px-4 py-20 sm:py-32">
-	<div class="mx-auto max-w-5xl">
-		<div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-			<div class="relative">
-				<div class="aspect-square overflow-hidden rounded-2xl border border-border">
-					<img src="/event (2).webp" alt="Yebehir Events" class="h-full w-full object-cover" />
-				</div>
-				<div
-					class="absolute -right-2 -bottom-6 max-w-xs rounded-xl bg-primary p-6 text-primary-foreground shadow-xl lg:-right-6"
-				>
-					<p class="text-sm font-semibold tracking-tight uppercase">
-						Redefining the event landscape in Addis Ababa
-					</p>
-				</div>
-			</div>
-
-			<div class="space-y-6">
-				<div>
-					<h2 class="mb-4 text-3xl font-bold text-foreground sm:text-4xl">Our Identity</h2>
-					<p class="mb-4 text-lg leading-relaxed text-muted-foreground">
-						Yebehir Ventures is not just an event company. We are a unique hybrid that combines
-						world-class management with venue operations and sponsorship tools.
-					</p>
-					<p class="text-lg leading-relaxed text-muted-foreground">
-						Our mission is to create experiences that don't just entertain—they generate qualified
-						leads, attract brand partnerships, and provide high-energy lifestyle moments.
-					</p>
-				</div>
-
-				<Card class="border-primary/20 bg-primary/5 shadow-none">
-					<CardHeader>
-						<CardTitle class="flex items-center gap-2 text-lg">
-							<BadgeCheckIcon class="size-5 text-primary" />
-							The Yebehir Edge
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<p class="text-muted-foreground italic">
-							"We don't just organize events—we create experiences, generate revenue opportunities,
-							and connect brands with audiences."
-						</p>
-					</CardContent>
-				</Card>
-			</div>
-		</div>
-	</div>
-</section>
-
-<section class="bg-muted/30 px-4 py-20 sm:py-32">
-	<div class="mx-auto max-w-5xl">
-		<div class="mb-16 text-center">
-			<h2 class="mb-4 text-3xl font-bold text-foreground sm:text-4xl">Our Core Pillars</h2>
-			<p class="mx-auto max-w-2xl text-lg text-muted-foreground">
-				Integrating three vital components of the event economy
-			</p>
-		</div>
-
-		<div class="grid gap-8 md:grid-cols-3">
-			<Card class="border-border transition-all duration-300 hover:border-primary/50">
-				<CardHeader>
-					<div class="mb-4 inline-flex rounded-lg bg-primary/10 p-3 text-primary">
-						<CalendarHeartIcon class="size-6" />
-					</div>
-					<CardTitle>Management</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<p class="text-muted-foreground">
-						Cinematic management for corporate, brand, and private functions with end-to-end
-						execution.
-					</p>
-				</CardContent>
-			</Card>
-
-			<Card class="border-border transition-all duration-300 hover:border-primary/50">
-				<CardHeader>
-					<div class="mb-4 inline-flex rounded-lg bg-primary/10 p-3 text-primary">
-						<MapPinIcon class="size-6" />
-					</div>
-					<CardTitle>Venue</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<p class="text-muted-foreground">
-						Operating 4 Kilo Plaza—a premium, central venue designed for flexibility and impact.
-					</p>
-				</CardContent>
-			</Card>
-
-			<Card class="border-border transition-all duration-300 hover:border-primary/50">
-				<CardHeader>
-					<div class="mb-4 inline-flex rounded-lg bg-primary/10 p-3 text-primary">
-						<TrendingUpIcon class="size-6" />
-					</div>
-					<CardTitle>Monetization</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<p class="text-muted-foreground">
-						Acting as a sales tool to drive sponsorship and event-based marketing for our partners.
-					</p>
-				</CardContent>
-			</Card>
-		</div>
-	</div>
-</section>
-
-<section
-	class="relative bg-cover bg-center px-4 py-20 sm:py-32"
-	style="background-image: url('/event (3).webp')"
->
-	<div class="absolute inset-0 bg-primary/60"></div>
-	<div class="relative z-10 mx-auto max-w-5xl">
-		<div class="mb-16 text-center">
-			<h2
-				class="mb-4 text-3xl font-bold tracking-tighter text-primary-foreground uppercase sm:text-4xl"
+			<p
+				in:fly={{ y: 30, duration: 700, delay: 200 }}
+				class="mx-auto mb-8 max-w-2xl text-lg text-secondary-foreground/80 sm:text-xl"
 			>
-				Service Ecosystem
-			</h2>
-			<p class="mx-auto max-w-2xl text-lg text-primary-foreground/80">
-				Comprehensive solutions tailored for high-impact results
+				Kaza Real Estate has been at the forefront of Addis Ababa's property market for over a
+				decade. We don't just sell properties—we help families find their perfect homes and
+				investors discover opportunities that build lasting wealth.
 			</p>
-		</div>
 
-		<div class="grid gap-8 md:grid-cols-2">
-			<Card class="border-white/20 bg-background/10 text-primary-foreground backdrop-blur-md">
-				<CardHeader>
-					<div class="mb-4 inline-flex rounded-lg bg-white/20 p-3">
-						<UsersIcon class="size-6" />
-					</div>
-					<CardTitle>Target Audience</CardTitle>
-				</CardHeader>
-				<CardContent class="space-y-3">
-					<p class="text-primary-foreground/80">We deliver value to:</p>
-					<ul class="flex flex-col gap-2 text-sm">
-						<li class="flex gap-2"><span>•</span> Corporate Clients (Banks, Telecom, FMCG)</li>
-						<li class="flex gap-2"><span>•</span> Brands & Sponsors seeking engagement</li>
-						<li class="flex gap-2"><span>•</span> Event Organizers and SMEs</li>
-						<li class="flex gap-2"><span>•</span> The energetic youth audience of Addis</li>
-					</ul>
-				</CardContent>
-			</Card>
-
-			<Card class="border-white/20 bg-background/10 text-primary-foreground backdrop-blur-md">
-				<CardHeader>
-					<div class="mb-4 inline-flex rounded-lg bg-white/20 p-3">
-						<CoffeeIcon class="size-6" />
-					</div>
-					<CardTitle>Event Add-ons</CardTitle>
-				</CardHeader>
-				<CardContent class="space-y-3">
-					<p class="text-primary-foreground/80">Premium essentials including:</p>
-					<ul class="flex flex-col gap-2 text-sm">
-						<li class="flex gap-2"><span>•</span> Professional Catering Services</li>
-						<li class="flex gap-2"><span>•</span> Coffee & Beverage Stations</li>
-						<li class="flex gap-2"><span>•</span> Sponsorship Acquisition Support</li>
-						<li class="flex gap-2"><span>•</span> Visual Media & Content Production</li>
-					</ul>
-				</CardContent>
-			</Card>
-		</div>
-	</div>
-</section>
-
-{#if data?.servicesItems.length}
-	<ServiceGrid services={data.servicesItems} />
-	<br />
-{/if}
-
-<section class="mx-auto max-w-7xl px-6 py-24 md:py-32">
-	<div class="mb-16 md:mb-20">
-		<h3
-			class="mt-4 text-4xl font-black tracking-tight text-foreground uppercase sm:text-5xl lg:text-6xl"
-		>
-			Business <span class="text-primary dark:text-accent">Units</span>
-		</h3>
-	</div>
-
-	<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-		{#each units as unit (unit.short)}
 			<div
-				class="group relative flex flex-col gap-5 overflow-hidden rounded-2xl border border-border bg-card p-8 shadow-sm transition-all hover:border-primary/30"
+				in:fly={{ y: 30, duration: 700, delay: 300 }}
+				class="flex items-center justify-center gap-4"
 			>
-				<div
-					class="absolute inset-x-0 top-0 h-1 bg-accent opacity-0 transition group-hover:opacity-100"
-				></div>
-
-				<div class="flex items-center justify-between">
-					<div class="flex size-14 items-center justify-center rounded-full bg-primary text-accent">
-						<unit.icon class="size-7" />
-					</div>
-					<span class="text-xs font-bold tracking-widest text-muted-foreground uppercase"
-						>{unit.short}</span
-					>
+				<div class="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2">
+					<BuildingIcon class="size-5 text-primary" />
+					<span class="text-sm font-medium text-secondary-foreground">Premium Properties</span>
 				</div>
-
-				<div class="grow space-y-2">
-					<p class="text-2xl font-bold tracking-tight text-foreground">{unit.name}</p>
-					<p class="text-sm leading-relaxed text-muted-foreground">
-						{unit.description}
-					</p>
+				<div class="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2">
+					<AwardIcon class="size-5 text-primary" />
+					<span class="text-sm font-medium text-secondary-foreground">Award Winning Service</span>
 				</div>
 			</div>
-		{/each}
+		</div>
+	</div>
+
+	<!-- Decorative Elements -->
+	<div class="absolute -bottom-24 -left-24 size-48 rounded-full bg-primary/10 blur-3xl"></div>
+	<div class="absolute -top-24 -right-24 size-48 rounded-full bg-primary/10 blur-3xl"></div>
+</section>
+
+<section class="bg-background py-16 lg:py-24">
+	<div class="container mx-auto px-4">
+		<div class="mb-12 text-center">
+			<h2 class="mb-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+				Our Track Record Speaks
+			</h2>
+			<p class="mx-auto max-w-2xl text-muted-foreground">
+				Numbers that reflect our commitment to excellence and the trust our clients place in us.
+			</p>
+		</div>
+
+		<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+			{#each stats as stat, index (stat.value)}
+				<div in:fly={{ y: 40, duration: 600, delay: index * 100 }}>
+					<Card
+						class="group hover:shadow-lg-xl hover:shadow-lg-primary/5 relative overflow-hidden border-2 border-transparent bg-gradient-to-br from-muted/50 to-muted p-6 text-center transition-all duration-300 hover:border-primary/20"
+					>
+						<div
+							class="absolute -top-8 -right-8 size-24 rounded-full bg-primary/5 transition-transform duration-500 group-hover:scale-150"
+						></div>
+						<div class="relative">
+							<p class="mb-2 text-4xl font-bold text-primary lg:text-5xl">{stat.value}</p>
+							<p class="mb-1 text-lg font-semibold text-foreground">{stat.label}</p>
+							<p class="text-sm text-muted-foreground">{stat.description}</p>
+						</div>
+					</Card>
+				</div>
+			{/each}
+		</div>
+	</div>
+</section>
+
+<section class="bg-background py-16 lg:py-24">
+	<div class="container mx-auto px-4">
+		<div class="mb-12 text-center">
+			<Badge class="mb-4 bg-primary/10 text-primary hover:bg-primary/20">Our Values</Badge>
+			<h2 class="mb-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+				What Sets Us Apart
+			</h2>
+			<p class="mx-auto max-w-2xl text-muted-foreground">
+				Our core values guide every interaction, every transaction, and every relationship we build.
+			</p>
+		</div>
+
+		<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+			{#each coreValues as value, index (value.title)}
+				<div in:fly={{ y: 40, duration: 600, delay: index * 100 }}>
+					<Card
+						class="group hover:shadow-lg-xl hover:shadow-lg-primary/5 h-full border-2 border-transparent transition-all duration-300 hover:border-primary/20"
+					>
+						<CardHeader>
+							<div
+								class="mb-4 flex size-14 items-center justify-center rounded-xl bg-linear-to-br from-primary/20 to-primary/5 transition-transform duration-300 group-hover:scale-110"
+							>
+								<value.icon class="size-7 text-primary" />
+							</div>
+							<CardTitle class="text-xl">{value.title}</CardTitle>
+							<CardDescription class="text-base leading-relaxed">
+								{value.description}
+							</CardDescription>
+						</CardHeader>
+					</Card>
+				</div>
+			{/each}
+		</div>
 	</div>
 </section>
 
@@ -382,41 +267,86 @@
 		<Testimonial testimonials={data.testimonialList} />
 	</main>
 {/if}
+<Faq />
 
-<FAQ />
+<section class="bg-linear-to-br from-secondary via-secondary to-secondary/90 py-16 lg:py-24">
+	<div class="container mx-auto px-4">
+		<div in:fly={{ y: 40, duration: 700 }}>
+			<Card
+				class="shadow-lg-2xl relative overflow-hidden border-0 bg-background/95 p-8 backdrop-blur-sm lg:p-12"
+			>
+				<!-- Background Decoration -->
+				<div class="absolute -top-20 -right-20 size-40 rounded-full bg-primary/10 blur-3xl"></div>
+				<div class="absolute -bottom-20 -left-20 size-40 rounded-full bg-primary/10 blur-3xl"></div>
 
-<section
-	class="relative bg-muted bg-cover bg-center px-4 py-20 sm:py-32"
-	style="background-image: url('/event (4).webp')"
->
-	<div class="absolute inset-0 bg-primary/60"></div>
-	<div class="relative z-10 mx-auto max-w-4xl">
-		<div
-			class="space-y-8 rounded-2xl border border-border p-8 text-center shadow-2xl supports-backdrop-filter:bg-background/80 sm:p-12"
-		>
-			<div class="flex flex-col gap-4">
-				<h2 class="text-3xl font-bold text-foreground sm:text-4xl">Plan Your Event With Us</h2>
-				<p class="mx-auto max-w-2xl text-lg text-muted-foreground">
-					Experience the unique combination of premium management and strategic monetization.
-				</p>
-			</div>
+				<div class="relative grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+					<!-- Content -->
+					<div>
+						<h2 class="mb-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+							Ready to Find Your <span class="text-primary">Dream Property?</span>
+						</h2>
+						<p class="mb-6 text-lg text-muted-foreground">
+							Whether you're looking to buy your first home, invest in real estate, or find the
+							perfect rental, our team is here to guide you every step of the way.
+						</p>
+						<div class="flex flex-wrap gap-4">
+							<Button href="/contact-us" size="lg" class="gap-2">
+								Schedule a Consultation
+								<ArrowRightIcon class="size-4" />
+							</Button>
+							<Button href="/properties" size="lg" variant="outline">Browse Properties</Button>
+						</div>
+					</div>
 
-			<div class="flex flex-col justify-center gap-4 sm:flex-row">
-				<Button href="/quote" size="lg" class="gap-2">
-					Get Your Quote
-					<ArrowRightIcon class="size-4" />
-				</Button>
-				<Button href="tel:+251911000000" size="lg" variant="outline">
-					<PhoneIcon class="size-4" />
-					Contact Sales
-				</Button>
-			</div>
+					<!-- Contact Info -->
+					<div class="flex flex-col gap-4 lg:pl-8">
+						<div
+							class="flex items-start gap-4 rounded-lg bg-muted/50 p-4 transition-colors hover:bg-muted"
+						>
+							<div
+								class="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/10"
+							>
+								<Phone class="size-5 text-primary" />
+							</div>
+							<a href="tel:+251911216413" class="flex flex-col gap-1">
+								<p class="font-semibold text-foreground">Call Us</p>
+								<p class="text-muted-foreground">+251 911 21 64 13</p>
+								<p class="text-sm text-muted-foreground">Mon-Sat, 9AM-6PM</p>
+							</a>
+						</div>
 
-			<div class="border-t border-border pt-4">
-				<p class="text-sm text-muted-foreground">
-					Notification emails and quote tracking handled via contact@yebehir.com
-				</p>
-			</div>
+						<div
+							class="flex items-start gap-4 rounded-lg bg-muted/50 p-4 transition-colors hover:bg-muted"
+						>
+							<div
+								class="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/10"
+							>
+								<Mail class="size-5 text-primary" />
+							</div>
+							<a href="mailto:info@kazarealestateeet.com" class="flex flex-col gap-1">
+								<p class="font-semibold text-foreground">Email Us</p>
+								<p class="text-muted-foreground">info@kazarealestateeet.com</p>
+								<p class="text-sm text-muted-foreground">We respond within 24 hours</p>
+							</a>
+						</div>
+					</div>
+
+					<div
+						class="flex items-start gap-4 rounded-lg bg-muted/50 p-4 transition-colors hover:bg-muted"
+					>
+						<div
+							class="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/10"
+						>
+							<MapPinIcon class="size-5 text-primary" />
+						</div>
+						<div>
+							<p class="font-semibold text-foreground">Visit Us</p>
+							<p class="text-muted-foreground">CMC Road, Addis Ababa</p>
+							<p class="text-sm text-muted-foreground">Near St. Gabriel Church</p>
+						</div>
+					</div>
+				</div>
+			</Card>
 		</div>
 	</div>
 </section>

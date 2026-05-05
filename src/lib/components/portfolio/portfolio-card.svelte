@@ -63,16 +63,15 @@
 	};
 </script>
 
-<article
+<a
 	class="group hover:shadow-lg-xl hover:shadow-lg-primary/10 cursor-pointer overflow-hidden rounded-xl border bg-card shadow-lg transition-all duration-300 hover:-translate-y-1"
-	onclick={handleClick}
-	onkeydown={handleKeyDown}
+	href="/properties/{property.slug}"
 	role="link"
 	tabindex="0"
 	aria-label="View {property.title}"
 >
 	<!-- Image Container -->
-	<div class="relative aspect-[4/3] overflow-hidden">
+	<div class="relative aspect-4/3 overflow-hidden">
 		<img
 			src="/files/{property.featuredImage}"
 			alt={property.title}
@@ -89,7 +88,7 @@
 
 			{#if property.propertyType}
 				<Badge variant="outline" class="bg-background/90 backdrop-blur-sm">
-					{property.propertyType.name}
+					{property.propertyType}
 				</Badge>
 			{/if}
 		</div>
@@ -165,4 +164,4 @@
 			{/if}
 		</div>
 	</div>
-</article>
+</a>

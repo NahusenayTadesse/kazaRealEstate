@@ -9,53 +9,39 @@
 
 	import Testimonial from '$lib/components/testimonial.svelte';
 	import Slider from '$lib/components/slider.svelte';
-	import Venues from '$lib/components/venues.svelte';
 
 	let { data } = $props();
 </script>
 
 <svelte:head>
-	<!-- Primary Meta Tags -->
-	<title>Yebehir Ventures | Event Management & 4 Kilo Plaza Venue Addis Ababa</title>
-	<meta
-		name="title"
-		content="Yebehir Ventures | Event Management & 4 Kilo Plaza Venue Addis Ababa"
-	/>
+	<title>Kaza Real Estate | Luxury Apartments & Villas in Addis Ababa</title>
 	<meta
 		name="description"
-		content="Ahead of the curve. Yebehir Ventures provides premium event management, corporate brand experiences, and venue rentals at 4 Kilo Plaza, Addis Ababa."
+		content="Kaza Real Estate and Trading PLC offers premium property sales and rentals in Addis Ababa. Specialized services for Diaspora and local investors in Bole, CMC, and beyond."
 	/>
 	<meta
 		name="keywords"
-		content="Yebehir Ventures, Event Management Ethiopia, 4 Kilo Plaza, Venue Rental Addis Ababa, Corporate Events Addis, Brand Activations Ethiopia, Sponsorship Marketing"
+		content="Real Estate Ethiopia, Apartments for sale Addis Ababa, Kaza Real Estate, Diaspora housing Ethiopia, Luxury villas Addis"
 	/>
 
 	<!-- Open Graph / Facebook -->
 	<meta property="og:type" content="website" />
-	<meta property="og:url" content="https://yebehir.com/" />
-	<meta property="og:title" content="Yebehir Ventures | Ahead of the curve" />
+	<meta property="og:url" content="https://kazarealestateet.com/" />
+	<meta property="og:title" content="Kaza Real Estate | Modern & Professional Property Solutions" />
 	<meta
 		property="og:description"
-		content="We create, manage, and monetize events. Discover full-service event production and venue bookings at 4 Kilo Plaza."
+		content="Discover your dream home in Addis Ababa with Kaza. Modern apartments and villas with 24/7 security and premium amenities."
 	/>
 	<meta property="og:image" content="/logo.png" />
 
 	<!-- Twitter -->
 	<meta property="twitter:card" content="summary_large_image" />
-	<meta property="twitter:url" content="https://yebehir.com/" />
-	<meta property="twitter:title" content="Yebehir Ventures | Event Management & Venue Operations" />
+	<meta property="twitter:title" content="Kaza Real Estate | Luxury Properties in Addis Ababa" />
 	<meta
 		property="twitter:description"
-		content="Leading multi-service event company in Addis Ababa. Specializing in event production, venue operations, and sales-driven brand experiences."
+		content="Specializing in high-end residential and commercial properties for local and Diaspora clients."
 	/>
 	<meta property="twitter:image" content="/logo.png" />
-
-	<!-- Canonical URL -->
-	<link rel="canonical" href="https://yebehir.com/" />
-
-	<!-- Favicon / Theming -->
-	<link rel="icon" type="image/png" href="/logo.png" />
-	<meta name="theme-color" content="#091B38" />
 </svelte:head>
 
 <Hero />
@@ -64,17 +50,15 @@
 	<section class="w-full space-y-8 py-12">
 		<!-- Section Header -->
 		<div class="flex flex-col items-center space-y-2 text-center">
-			<h2 class="text-3xl font-bold tracking-tight text-foreground">Featured Events</h2>
-			<p class="max-w-150 text-muted-foreground">
-				A curated look at our most recent celebrations, corporate gatherings, and milestones.
-			</p>
+			<h2 class="text-3xl font-bold tracking-tight text-foreground">Featured Properties</h2>
+			<p class="max-w-150 text-muted-foreground">A curated look at our most best properties.</p>
 		</div>
 
 		<!-- Carousel Container -->
 		<div class="relative px-12">
 			<Carousel.Root opts={{ align: 'start', loop: true }} class="w-full">
 				<Carousel.Content class="-ml-4">
-					{#each data.portfolioItems as item (item.id)}
+					{#each data.portfolioItems.filter((r) => r.status === true) as item (item.id)}
 						<Carousel.Item class="basis-full pl-4 md:basis-1/2 lg:basis-1/3">
 							<div class="h-full transition-all hover:scale-[1.01]">
 								<PortfolioCard property={item} />

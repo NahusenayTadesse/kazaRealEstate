@@ -17,7 +17,7 @@
 		{ label: 'About Us', href: '/about-us' },
 
 		{ label: 'Properties', href: '/properties' },
-		{ label: 'Blogs', href: '/blogs' },
+		// { label: 'Blogs', href: '/blogs' },
 
 		{ label: 'Contact', href: '/contact-us' }
 	];
@@ -29,9 +29,9 @@
 	<div class="flex items-center justify-between px-4 md:px-6">
 		<!-- Logo/Title -->
 		<div class="flex shrink-0 items-center gap-2">
-			<a href="/" class="inline-block">
+			<a href="/" class="inline-block shadow-lg">
 				<img
-					src="/logo.webp"
+					src="/logoYellow.png"
 					class="h-12 w-auto object-contain"
 					alt="Kaza Real Estate"
 					fetchpriority="high"
@@ -57,9 +57,9 @@
 		</nav>
 		<div class="flex flex-row gap-4">
 			<div class="hidden flex-row items-center justify-end gap-2 lg:flex">
-				<!-- <Button href="/quote" size="lg" variant="outline"
-					>Get A Quote<ArrowRight class="size-4" /></Button
-				> -->
+				<Button href="/properties" size="lg" variant="outline"
+					>View Properties<ArrowRight class="size-4" /></Button
+				>
 				<DarkMode />
 			</div>
 

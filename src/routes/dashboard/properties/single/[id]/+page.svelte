@@ -10,7 +10,7 @@
 	import InputComp from '$lib/formComponents/InputComp.svelte';
 
 	import LoadingBtn from '$lib/formComponents/LoadingBtn.svelte';
-	import { ArrowLeft, Check, Pencil, Save } from '@lucide/svelte';
+	import { ArrowLeft, Check, Pencil, Quote, Save } from '@lucide/svelte';
 	import type { Snapshot } from '@sveltejs/kit';
 	import Delete from '$lib/forms/Delete.svelte';
 	import SingleView from '$lib/components/SingleView.svelte';
@@ -85,6 +85,11 @@
 
 				Back
 			{/if}
+		</Button>
+
+		<Button href="/dashboard/properties/single/{page.params.id}/inquiries">
+			<Quote class="h-4 w-4" />
+			Inquiries
 		</Button>
 
 		<Delete redirect="/dashboard/blog" />

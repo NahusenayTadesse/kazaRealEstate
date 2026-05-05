@@ -10,6 +10,7 @@
 
 	let {
 		title,
+		description,
 		children,
 		variant,
 		IconComp,
@@ -17,6 +18,7 @@
 		class: className = ''
 	}: {
 		title: string;
+		description?: string;
 		children: Snippet;
 		variant: ButtonVariant;
 		IconComp?: Component<IconProps>;
@@ -41,6 +43,9 @@
 	<Dialog.Content class="w-lg! {className}">
 		<Dialog.Header>
 			<Dialog.Title>{title}</Dialog.Title>
+			{#if description}
+				<Dialog.Description>{description}</Dialog.Description>
+			{/if}
 		</Dialog.Header>
 		<ScrollArea class="h-auto w-full! min-w-0!  px-2 pr-4" orientation="both">
 			<div class="h-auto max-h-96 w-full lg:max-h-[calc(100vh-10rem)]">
