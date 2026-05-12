@@ -3,6 +3,7 @@
 	import {
 		ShieldCheck,
 		Users,
+		House,
 		CreditCard,
 		Newspaper,
 		Calendar,
@@ -17,6 +18,17 @@
 
 	const navigation = [
 		{
+			title: 'Operations',
+			description: 'Events, Venues, and Services',
+			color: 'border-l-emerald-500',
+			span: 'md:col-span-2',
+			links: [
+				{ name: 'Properties', href: '/properties', icon: House },
+				{ name: 'Inquiries', href: '/inquiries', icon: Quote },
+				{ name: 'Messages', href: '/messages', icon: MessageSquare }
+			]
+		},
+		{
 			title: 'Content',
 			description: 'Blogs and client testimonials',
 			color: 'border-l-amber-500',
@@ -26,26 +38,7 @@
 				{ name: 'Partner Logos', href: '/logos', icon: Image }
 			]
 		},
-		{
-			title: 'Operations',
-			description: 'Events, Venues, and Services',
-			color: 'border-l-emerald-500',
-			span: 'md:col-span-2',
-			links: [
-				{ name: 'Events', href: '/events', icon: Calendar },
-				{ name: 'Venues', href: '/venues', icon: MapPin },
-				{ name: 'Services', href: '/services', icon: Briefcase }
-			]
-		},
-		{
-			title: 'Sales & CRM',
-			description: 'Orders, Quotes, and Inquiries',
-			color: 'border-l-rose-500',
-			links: [
-				{ name: 'Quotes', href: '/quotes', icon: Quote },
-				{ name: 'Messages', href: '/messages', icon: MessageSquare }
-			]
-		},
+
 		{
 			title: 'User Management',
 			description: 'Manage system access and permissions',

@@ -7,8 +7,7 @@ import {
 	editGallery,
 	addFeature,
 	addVideo,
-	editVideo,
-	deleteVideo
+	editVideo
 } from './schema';
 
 import { db } from '$lib/server/db';

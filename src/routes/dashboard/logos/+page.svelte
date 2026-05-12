@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button/index.js';
-	import { Save, Video, Image as ImageIcon, AlertCircle } from '@lucide/svelte';
+	import { Save, Image as ImageIcon } from '@lucide/svelte';
 	import LoadingBtn from '$lib/formComponents/LoadingBtn.svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import InputComp from '$lib/formComponents/InputComp.svelte';
@@ -24,12 +24,12 @@
 		}
 	});
 
-	let videoId = $derived.by(() => {
-		const regex =
-			/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
-		const match = rawUrl?.match(regex);
-		return match ? match[1] : null;
-	});
+	// let videoId = $derived.by(() => {
+	// 	const regex =
+	// 		/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+	// 	const match = rawUrl?.match(regex);
+	// 	return match ? match[1] : null;
+	// });
 </script>
 
 <svelte:head>
@@ -48,7 +48,7 @@
 			<h2>Logo Images</h2>
 		</div>
 
-		<FormCard title="Logo Images: ({images.length})" className="w-full shadow-sm border">
+		<FormCard title="Logo Images: ({images.length})" class="w-full border shadow-sm">
 			<form method="post" action="?/editGallery" use:enhance enctype="multipart/form-data">
 				<InputComp label="" name="existing" type="hidden" {form} {errors} required={true} />
 

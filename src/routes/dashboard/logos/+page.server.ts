@@ -17,13 +17,14 @@ export const load: PageServerLoad = async () => {
 	return { form, gallery: imagesList };
 };
 
-import { saveUploadedFile } from '$lib/server/upload';
+import { uploadGallery } from '$lib/server/upload';
 
 export const actions: Actions = {
 	editGallery: async ({ request }) => {
 		const form = await superValidate(request, zod4(editGallery));
 
 		const { existing, images } = form.data;
+		console.log(form);
 
 		try {
 			await db.transaction(async (tx) => {
@@ -68,22 +69,25 @@ export const actions: Actions = {
 	}
 };
 
-const uploadGallery = async (gallery: File[] | undefined) => {
-	try {
-		// 1. Map each file to the upload promise
-		const uploadPromises = gallery.map(async (file) => {
-			const address = await saveUploadedFile(file);
-			return address; // This is the string returned by your function
-		});
+// const uploadGallery = async (gallery: File[] | undefined) => {
+// 	if (!gallery || gallery.length === 0) return [];
 
-		// 2. Wait for all uploads to complete and store results in an array
-		const uploadedAddresses: string[] = await Promise.all(uploadPromises);
+// 	try {
+// 		// 1. Map each file to the upload promise
 
-		console.log('All files uploaded:', uploadedAddresses);
+// 		const uploadPromises = gallery?.map(async (file) => {
+// 			const address = await saveUploadedFile(file);
+// 			return address; // This is the string returned by your function
+// 		});
 
-		return uploadedAddresses;
-	} catch (error) {
-		console.error('Error uploading gallery:', error);
-		throw error;
-	}
-};
+// 		// 2. Wait for all uploads to complete and store results in an array
+// 		const uploadedAddresses: string[] = await Promise.all(uploadPromises);
+
+// 		console.log('All files uploaded:', uploadedAddresses);
+
+// 		return uploadedAddresses;
+// 	} catch (error) {
+// 		console.error('Error uploading gallery:', error);
+// 		throw error;
+// 	}
+// };

@@ -1,46 +1,69 @@
-import { createWriteStream } from 'node:fs';
-import { rename, unlink } from 'node:fs/promises';
-import { join, extname } from 'node:path';
+// src/lib/server/upload.ts
+import fs from 'node:fs';
+import path from 'node:path';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { env } from '$env/dynamic/private';
+import { randomUUID } from 'crypto';
+
 const FILES_DIR = env.FILES_DIR ?? '.tempFiles';
 
+/* ensure folder exists once, at module load */
+if (!fs.existsSync(FILES_DIR)) {
+	fs.mkdirSync(FILES_DIR, { recursive: true });
+}
+
 /**
- * Optimized file writer
- * 1. Uses async/await for all FS operations to keep event loop free.
- * 2. Uses a shared Buffer size if applicable (handled by pipeline).
- * 3. Uses atomic rename for data integrity.
+ * Save an uploaded file and return the stored file name.
+ * @param file  File object coming from formData (has .name, .stream(), .type, etc.)
+ * @returns     The generated file name (with extension) that was written to disk
+ * @throws      If the write fails
  */
-async function writeFile(file: File, targetDir: string, fileName: string): Promise<void> {
-	const target = join(targetDir, fileName);
-	const tmp = `${target}.tmp`;
-
-	try {
-		// Performance: pipeline handles the memory-efficient backpressure
-		// casting to 'any' here is often necessary due to subtle TS mismatches
-		// between Web Streams and Node Streams, but the runtime works perfectly.
-		await pipeline(Readable.fromWeb(file.stream() as any), createWriteStream(tmp));
-
-		// Performance: Non-blocking rename
-		await rename(tmp, target);
-	} catch (e) {
-		// Clean up tmp file if error occurs
-		try {
-			await unlink(tmp);
-		} catch {
-			/* Ignore if file doesn't exist */
-		}
-		throw e;
-	}
-}
-
 export async function saveUploadedFile(file: File | undefined): Promise<string> {
-	if (!file) throw new Error('No file provided');
+	const ext = path.extname(file?.name); // keep original extension
+	const fileName = `${randomUUID()}${ext}`;
 
-	// Performance: crypto.randomUUID() is native C++ in Node, extremely fast.
-	const fileName = `${crypto.randomUUID()}${extname(file.name)}`;
+	const target = path.join(FILES_DIR, fileName);
 
-	await writeFile(file, FILES_DIR, fileName);
-	return fileName;
+	const webStream = file.stream(); // Web-stream from File
+	const nodeStream = Readable.fromWeb(webStream);
+
+	await pipeline(nodeStream, fs.createWriteStream(target));
+	invalidateStatCache(path.resolve(FILES_DIR, target));
+
+	return fileName; // store this string in your DB
 }
+
+export const uploadGallery = async (gallery: File[] | undefined, batchSize = 4) => {
+	if (!gallery || gallery.length === 0) return [];
+
+	const results: PromiseSettledResult<string>[] = [];
+
+	for (let i = 0; i < gallery.length; i += batchSize) {
+		const batch = gallery.slice(i, i + batchSize);
+		const batchResults = await Promise.allSettled(batch.map((file) => saveUploadedFile(file)));
+		results.push(...batchResults);
+	}
+
+	const uploadedAddresses: string[] = [];
+	const failed: number[] = [];
+
+	results.forEach((result, index) => {
+		if (result.status === 'fulfilled') {
+			uploadedAddresses.push(result.value);
+		} else {
+			console.error(`File ${index + 1} failed:`, result.reason);
+			failed.push(index);
+		}
+	});
+
+	if (failed.length > 0) {
+		console.warn(`${failed.length} file(s) failed to upload:`, failed);
+		// Decide: throw, or return partial results?
+		// throw new Error(`${failed.length} file(s) failed`);
+	}
+
+	return uploadedAddresses;
+};
+
+import { invalidateStatCache } from '$lib/server/fileCache';

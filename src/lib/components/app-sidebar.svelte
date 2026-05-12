@@ -56,11 +56,11 @@
 			]
 		},
 
-		{
-			title: 'Services',
-			url: '/dashboard/services',
-			icon: TrendingUp
-		},
+		// {
+		// 	title: 'Services',
+		// 	url: '/dashboard/services',
+		// 	icon: TrendingUp
+		// },
 
 		{
 			title: 'Messages',

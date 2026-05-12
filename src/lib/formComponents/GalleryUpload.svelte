@@ -2,219 +2,330 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input/index';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import {
-		X,
-		CloudUpload as UploadCloud,
-		FileText,
-		Image as ImageIcon,
-		Loader,
-		BrushCleaning
-	} from '@lucide/svelte';
-	import { fade } from 'svelte/transition';
+	import { X, CloudUpload, FileText, Loader2, Trash2, ImageIcon } from '@lucide/svelte';
+	import { fade, scale } from 'svelte/transition';
 	import { filesProxy } from 'sveltekit-superforms';
 	import imageCompression from 'browser-image-compression';
 	import { toast } from 'svelte-sonner';
+	import { onDestroy } from 'svelte';
 
 	let {
 		form,
 		name,
-		title = 'Gallery Upload',
-		placeholder = 'Images or PDFs (Max 1MB per image)',
-		images = $bindable([])
+		placeholder = 'Images or PDFs — max 1 MB per image',
+		images = $bindable<string[]>([])
 	} = $props();
 
-	// Use filesProxy for multi-file support with Superforms
-	let file = filesProxy(form, name);
+	const file = filesProxy(form, name);
+
+	// ─── State ────────────────────────────────────────────────────────────────
 
 	let isDragging = $state(false);
 	let isProcessing = $state(false);
+	let progress = $state({ current: 0, total: 0 });
 
-	async function handleFileSelection(newFiles: FileList | null) {
-		if (!newFiles || newFiles.length === 0) return;
+	/**
+	 * Parallel map: File → object-URL (images) or '' (PDFs / other).
+	 * Index-aligned with $file. We manage this manually so we never
+	 * revoke a URL that is still being displayed.
+	 */
+	let previewUrls = $state<string[]>([]);
 
-		isProcessing = true;
+	onDestroy(() => {
+		previewUrls.forEach((u) => u && URL.revokeObjectURL(u));
+	});
 
-		const options = {
-			maxSizeMB: 1,
-			maxWidthOrHeight: 1920,
-			useWebWorker: true,
-			initialQuality: 0.8
-		};
+	// ─── Helpers ──────────────────────────────────────────────────────────────
 
+	/** Create a URL only for brand-new entries; reuse existing ones. */
+	function syncPreviewUrls(files: File[]) {
+		const next: string[] = files.map((f, i) => {
+			// If we already have a URL for this exact File object, keep it.
+			const existing = previewUrls[i];
+			if (existing) return existing;
+			return f.type.startsWith('image/') ? URL.createObjectURL(f) : '';
+		});
+
+		// Revoke any URLs that are no longer needed (removed files).
+		previewUrls.forEach((u, i) => {
+			if (u && !next.includes(u)) URL.revokeObjectURL(u);
+		});
+
+		previewUrls = next;
+	}
+
+	async function compress(f: File): Promise<File> {
+		if (!f.type.startsWith('image/')) return f;
 		try {
-			const processed = await Promise.all(
-				Array.from(newFiles).map(async (f) => {
-					// Skip compression for PDFs or non-image types
-					if (f.type === 'application/pdf' || !f.type.startsWith('image/')) {
-						return f;
-					}
-					try {
-						const compressed = await imageCompression(f, options);
-						return new File([compressed], f.name, { type: compressed.type });
-					} catch (err) {
-						console.error('Compression error:', err);
-						return f;
-					}
-				})
-			);
-
-			// Append new files to existing ones in the proxy
-			const currentFiles = Array.from($file ?? []);
-			const dt = new DataTransfer();
-			[...currentFiles, ...processed].forEach((f) => dt.items.add(f));
-
-			$file = Array.from(dt.files);
-			toast.success(`${processed.length} file(s) added and optimized`);
-		} catch (err) {
-			console.error('Selection Error:', err);
-			toast.error('Failed to process files');
-		} finally {
-			isProcessing = false;
+			const blob = await imageCompression(f, {
+				maxSizeMB: 1,
+				maxWidthOrHeight: 1920,
+				useWebWorker: true,
+				initialQuality: 0.8
+			});
+			return new File([blob], f.name, { type: blob.type });
+		} catch {
+			toast.warning(`Couldn't compress ${f.name} — using original`);
+			return f;
 		}
 	}
 
-	function removeNewFile(index: number) {
-		const current = Array.from($file);
-		current.splice(index, 1);
-		$file = current;
+	async function processInBatches(incoming: File[], batchSize = 4): Promise<File[]> {
+		const results: File[] = [];
+		for (let i = 0; i < incoming.length; i += batchSize) {
+			const batch = incoming.slice(i, i + batchSize);
+			const done = await Promise.all(
+				batch.map(async (f) => {
+					const out = await compress(f);
+					progress.current += 1;
+					return out;
+				})
+			);
+			results.push(...done);
+		}
+		return results;
 	}
 
-	function removeExistingImage(index: number) {
+	function toFileList(files: File[]): FileList {
+		const dt = new DataTransfer();
+		files.forEach((f) => dt.items.add(f));
+		return dt.files;
+	}
+
+	// ─── Handlers ─────────────────────────────────────────────────────────────
+
+	async function handleFiles(incoming: FileList | null) {
+		if (!incoming?.length) return;
+
+		isProcessing = true;
+		progress = { current: 0, total: incoming.length };
+
+		try {
+			const processed = await processInBatches(Array.from(incoming));
+			const merged = [...Array.from($file ?? []), ...processed];
+			$file = toFileList(merged);
+			syncPreviewUrls(merged);
+			toast.success(`${processed.length} file${processed.length !== 1 ? 's' : ''} added`);
+		} catch {
+			toast.error('Failed to process one or more files');
+		} finally {
+			isProcessing = false;
+			progress = { current: 0, total: 0 };
+		}
+	}
+
+	function removeNew(index: number) {
+		// Revoke only this URL.
+		if (previewUrls[index]) URL.revokeObjectURL(previewUrls[index]);
+
+		const next = Array.from($file).filter((_, i) => i !== index);
+		previewUrls = previewUrls.filter((_, i) => i !== index);
+		$file = toFileList(next);
+	}
+
+	function removeExisting(index: number) {
 		images = images.filter((_, i) => i !== index);
 	}
+
+	function clearNew() {
+		previewUrls.forEach((u) => u && URL.revokeObjectURL(u));
+		previewUrls = [];
+		$file = new DataTransfer().files;
+	}
+
+	// ─── Derived ──────────────────────────────────────────────────────────────
+
+	const newFiles = $derived(Array.from($file ?? []));
+	const totalCount = $derived(images.length + newFiles.length);
 </script>
 
-<div class="flex w-full flex-col gap-6">
-	<!-- Upload Area -->
-	<div class="flex flex-col gap-2">
-		<Label
-			for={name}
-			class="group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed py-8 transition-all
+<!-- ─── Upload Zone ──────────────────────────────────────────────────────── -->
+<div class="flex w-full flex-col gap-5">
+	<Label
+		for={name}
+		class="
+			group relative flex cursor-pointer flex-col items-center justify-center
+			gap-3 rounded-2xl border-2 border-dashed py-10 text-center
+			transition-all duration-200
 			{isDragging
-				? 'border-primary bg-primary/5'
-				: 'border-muted-foreground/25 bg-muted/50 hover:border-primary/50 hover:bg-muted'}"
-			ondragover={(e) => {
-				e.preventDefault();
-				isDragging = true;
-			}}
-			ondragleave={() => (isDragging = false)}
-			ondrop={(e) => {
-				e.preventDefault();
-				isDragging = false;
-				handleFileSelection(e.dataTransfer?.files);
-			}}
+			? 'border-primary bg-primary/5 shadow-inner'
+			: 'border-muted-foreground/20 bg-muted/40 hover:border-primary/40 hover:bg-muted/70'}
+		"
+		ondragover={(e) => {
+			e.preventDefault();
+			isDragging = true;
+		}}
+		ondragleave={() => (isDragging = false)}
+		ondrop={(e) => {
+			e.preventDefault();
+			isDragging = false;
+			handleFiles(e.dataTransfer?.files ?? null);
+		}}
+	>
+		<!-- Icon -->
+		<div
+			class="
+				rounded-full border bg-background p-4 shadow-sm
+				transition-transform duration-200 group-hover:scale-105
+				{isDragging ? 'scale-110 border-primary/40' : ''}
+			"
 		>
-			<div class="flex flex-col items-center justify-center gap-3 text-center">
+			{#if isProcessing}
+				<Loader2 class="h-6 w-6 animate-spin text-primary" />
+			{:else}
+				<CloudUpload
+					class="h-6 w-6 transition-colors {isDragging
+						? 'text-primary'
+						: 'text-muted-foreground group-hover:text-primary/70'}"
+				/>
+			{/if}
+		</div>
+
+		<!-- Label text -->
+		<div class="flex flex-col gap-0.5">
+			<p class="text-sm font-semibold">
+				{#if isProcessing}
+					Optimising {progress.current} / {progress.total}…
+				{:else if isDragging}
+					Drop to upload
+				{:else}
+					Click to upload or drag & drop
+				{/if}
+			</p>
+			<p class="text-xs text-muted-foreground">{placeholder}</p>
+		</div>
+
+		<!-- Progress bar -->
+		{#if isProcessing && progress.total > 0}
+			<div class="h-1 w-52 overflow-hidden rounded-full bg-muted" transition:fade>
 				<div
-					class="rounded-full bg-background p-4 shadow-sm transition-transform group-hover:scale-110"
-				>
-					{#if isProcessing}
-						<Loader class="h-6 w-6 animate-spin text-primary" />
-					{:else}
-						<UploadCloud class="h-6 w-6 {isDragging ? 'text-primary' : 'text-muted-foreground'}" />
-					{/if}
-				</div>
-				<div class="px-4">
-					<p class="text-sm font-medium">
-						{isProcessing
-							? 'Optimizing assets...'
-							: isDragging
-								? 'Drop them now!'
-								: 'Click to upload or drag gallery'}
-					</p>
-					<p class="text-xs text-muted-foreground">{placeholder}</p>
-				</div>
+					class="h-full rounded-full bg-primary transition-all duration-300"
+					style="width: {(progress.current / progress.total) * 100}%"
+				></div>
 			</div>
+		{/if}
 
-			<Input
-				id={name}
-				type="file"
-				class="hidden"
-				{name}
-				accept="image/*,application/pdf"
-				multiple={true}
-				onchange={(e) => handleFileSelection(e.currentTarget.files)}
-			/>
-		</Label>
-	</div>
+		<Input
+			id={name}
+			type="file"
+			class="hidden"
+			{name}
+			accept="image/*,application/pdf"
+			multiple
+			onchange={(e) => handleFiles(e.currentTarget.files)}
+		/>
+	</Label>
 
-	<!-- Gallery Grid -->
-	{#if $file.length > 0 || images.length > 0}
-		<div class="space-y-4">
+	<!-- ─── Gallery ──────────────────────────────────────────────────────────── -->
+	{#if totalCount > 0}
+		<div class="space-y-3" transition:fade={{ duration: 150 }}>
+			<!-- Header -->
 			<div class="flex items-center justify-between">
-				<h3 class="text-sm font-semibold tracking-tight">Gallery Preview</h3>
-				{#if $file.length > 0}
+				<p class="text-sm font-semibold">
+					Gallery
+					<span class="ml-1 font-normal text-muted-foreground">({totalCount})</span>
+				</p>
+
+				{#if newFiles.length > 0}
 					<Button
+						type="button"
 						variant="ghost"
 						size="sm"
-						class="h-8 text-xs text-muted-foreground hover:text-destructive"
-						onclick={() => ($file = [])}
+						class="h-7 gap-1.5 text-xs text-muted-foreground hover:text-destructive"
+						onclick={clearNew}
 					>
-						<BrushCleaning class="mr-2 h-3.5 w-3.5" /> Clear New
+						<Trash2 class="h-3 w-3" />
+						Clear new
 					</Button>
 				{/if}
 			</div>
 
-			<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-				<!-- Existing Images (Server) -->
+			<!-- Grid -->
+			<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+				<!-- Server-side existing images -->
 				{#each images as img, i (img)}
 					<div
-						class="group relative aspect-square overflow-hidden rounded-lg border bg-muted"
-						transition:fade
+						class="group relative aspect-square overflow-hidden rounded-xl border bg-muted shadow-sm"
+						transition:scale={{ start: 0.92, duration: 150 }}
 					>
-						<img src="/files/{img}" class="h-full w-full object-cover" alt="Server asset" />
+						<img
+							src="/files/{img}"
+							alt="Existing file"
+							class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+						/>
+
+						<!-- Overlay -->
 						<div
-							class="absolute inset-0 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100"
+							class="absolute inset-0 flex items-start justify-end bg-black/0 p-1.5 transition-colors group-hover:bg-black/40"
 						>
 							<Button
+								type="button"
 								variant="destructive"
 								size="icon"
-								class="absolute top-1 right-1 h-7 w-7 rounded-full"
-								onclick={() => removeExistingImage(i)}
+								class="h-6 w-6 scale-75 rounded-full opacity-0 transition-all group-hover:scale-100 group-hover:opacity-100"
+								onclick={() => removeExisting(i)}
+								aria-label="Remove file"
 							>
-								<X class="h-4 w-4" />
+								<X class="h-3.5 w-3.5" />
 							</Button>
 						</div>
-						<div class="absolute right-0 bottom-0 left-0 bg-background/80 p-1 text-center">
-							<span class="text-[10px] font-medium text-muted-foreground uppercase">Existing</span>
+
+						<!-- Badge -->
+						<div
+							class="absolute right-0 bottom-0 left-0 bg-background/80 px-1.5 py-0.5 backdrop-blur-sm"
+						>
+							<span class="text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
+								Saved
+							</span>
 						</div>
 					</div>
 				{/each}
 
-				<!-- New Uploads (Compressed) -->
-				{#each $file as f, i (f.name + i)}
+				<!-- Newly uploaded files -->
+				{#each newFiles as f, i (f.name + f.lastModified)}
 					<div
-						class="group relative aspect-square overflow-hidden rounded-lg border bg-card shadow-sm"
-						transition:fade
+						class="group relative aspect-square overflow-hidden rounded-xl border bg-card shadow-sm"
+						transition:scale={{ start: 0.92, duration: 150 }}
 					>
-						{#if f.type.startsWith('image/')}
+						{#if f.type.startsWith('image/') && previewUrls[i]}
 							<img
-								src={URL.createObjectURL(f)}
-								class="h-full w-full object-cover"
-								alt="Local preview"
+								src={previewUrls[i]}
+								alt="Preview"
+								class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
 							/>
 						{:else}
-							<div class="flex h-full flex-col items-center justify-center gap-2 bg-muted/50">
-								<FileText class="h-8 w-8 text-muted-foreground" />
-								<span class="max-w-full truncate px-2 text-[10px]">{f.name}</span>
+							<!-- PDF / non-image placeholder -->
+							<div class="flex h-full flex-col items-center justify-center gap-2 bg-muted/60 px-2">
+								<FileText class="h-8 w-8 shrink-0 text-muted-foreground" />
+								<span class="line-clamp-2 text-center text-[10px] text-muted-foreground">
+									{f.name}
+								</span>
 							</div>
 						{/if}
 
+						<!-- Overlay -->
 						<div
-							class="absolute inset-0 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100"
+							class="absolute inset-0 flex items-start justify-end bg-black/0 p-1.5 transition-colors group-hover:bg-black/40"
 						>
 							<Button
+								type="button"
 								variant="destructive"
 								size="icon"
-								class="absolute top-1 right-1 h-7 w-7 rounded-full"
-								onclick={() => removeNewFile(i)}
+								class="h-6 w-6 scale-75 rounded-full opacity-0 transition-all group-hover:scale-100 group-hover:opacity-100"
+								onclick={() => removeNew(i)}
+								aria-label="Remove file"
 							>
-								<X class="h-4 w-4" />
+								<X class="h-3.5 w-3.5" />
 							</Button>
 						</div>
 
-						<div class="absolute right-0 bottom-0 left-0 bg-primary/90 p-1 text-center text-white">
-							<span class="text-[10px] font-bold">{(f.size / 1024).toFixed(0)} KB</span>
+						<!-- Size badge -->
+						<div
+							class="absolute right-0 bottom-0 left-0 bg-primary/90 px-1.5 py-0.5 text-white backdrop-blur-sm"
+						>
+							<span class="text-[10px] font-semibold">
+								{(f.size / 1024).toFixed(0)} KB
+							</span>
 						</div>
 					</div>
 				{/each}
